@@ -1,0 +1,7 @@
+Les lots attribuent des fichiers entiers pour éviter des copies concurrentes, sans changer les responsabilités Jira.
+M1 apporte le socle et les migrations, y compris domain.js et seed.js. M6 doit vérifier les règles fidélité/parrainage de domain.js (MMM-34 à MMM-36).
+M3 apporte student.jsx (profil, panier, suivi, fidélité, confidentialité). M4 revoit MMM-25 à MMM-27, M5 revoit MMM-30, M6 revoit MMM-34/35, M7 revoit le classement et les informations légales/statistiques concernées.
+M4 apporte restaurant.jsx. M3 revoit la gestion des rôles MMM-21, M5 les parcours opérationnels MMM-28/29, M7 les tableaux et paramètres MMM-37/39.
+M5 apporte management.js et engagement.js. M2 revoit les participations MMM-40, M3 le personnel MMM-21, M6 les corrections/règles points, M7 les statistiques MMM-37/38/39.
+M7 apporte les tests et la documentation existants, sans revendiquer l’écriture personnelle de ces références. M3 reste responsable Jira des manuels MMM-46 ; M5 du budget/risques MMM-47 ; M2 de la présentation MMM-48. Les documents LaTeX remis sont leurs supports de travail, pas la preuve que ces personnes les ont déjà validés.
+Chaque responsable peut corriger son périmètre après l’assemblage complet dans une nouvelle demande de revue. Ne pas recopier un ancien fichier complet par-dessus la version intégrée.
