@@ -1,0 +1,6 @@
+Procédure mise à jour V3 — 25 octobre 2026
+Utilisez les nouveaux ZIP et le guide V3. Ne réutilisez pas les anciens scripts sans -Etape.
+Dépôt : https://github.com/merditshinyama-icam/Mon-Miam-Miam-Officiel
+Après l’acceptation de votre invitation : nouveau clone, branche de votre lot, synchronisation de l’intégration après le membre précédent.
+Lisez COMMITS_A_SUIVRE.txt : il donne pour C01 puis C02/C03 les fichiers exacts, ce qui attend, les vérifications et le message. Copiez une étape à la fois, remplissez la note de compréhension, puis PREPARER_INDEX sélectionne uniquement les bons fichiers. Lisez git diff --cached puis créez vous-même le commit. Aucun script ne pousse ou ne choisit une identité pour vous.
+Ordre des lots : M1 → M2 → M3 → M4 → M5 → M6 → M7. Après assemblage, exécutez les tests et les scénarios réels. Les paquets sont préparés avec Codex ; décrivez honnêtement vos intégrations et adaptations. Les 70 tests de préparation ne remplacent pas votre recette.

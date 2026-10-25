@@ -1,0 +1,153 @@
+{
+  "date": "2026-10-25",
+  "commits": [
+    {
+      "lot": "M1",
+      "etape": "C01",
+      "files": 8,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M1",
+      "etape": "C02",
+      "files": 11,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M1",
+      "etape": "C03",
+      "files": 8,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M2",
+      "etape": "C01",
+      "files": 15,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M2",
+      "etape": "C02",
+      "files": 8,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M2",
+      "etape": "C03",
+      "files": 1,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M3",
+      "etape": "C01",
+      "files": 3,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M3",
+      "etape": "C02",
+      "files": 2,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M3",
+      "etape": "C03",
+      "files": 1,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M4",
+      "etape": "C01",
+      "files": 1,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M4",
+      "etape": "C02",
+      "files": 1,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M5",
+      "etape": "C01",
+      "files": 1,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M5",
+      "etape": "C02",
+      "files": 1,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M6",
+      "etape": "C01",
+      "files": 3,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M6",
+      "etape": "C02",
+      "files": 1,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M7",
+      "etape": "C01",
+      "files": 6,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    },
+    {
+      "lot": "M7",
+      "etape": "C02",
+      "files": 12,
+      "index_exact": true,
+      "syntax": "passed where applicable"
+    }
+  ],
+  "files": 83,
+  "negative_checks": [
+    "wrong branch rejected",
+    "M1C01 incomplete note rejected",
+    "existing index rejected",
+    "M1C02 incomplete note rejected",
+    "M1C03 incomplete note rejected",
+    "M2C01 incomplete note rejected",
+    "M2C02 incomplete note rejected",
+    "M2C03 incomplete note rejected",
+    "M3C01 incomplete note rejected",
+    "M3C02 incomplete note rejected",
+    "M3C03 incomplete note rejected",
+    "M4C01 incomplete note rejected",
+    "M4C02 incomplete note rejected",
+    "M5C01 incomplete note rejected",
+    "M5C02 incomplete note rejected",
+    "M6C01 incomplete note rejected",
+    "M6C02 incomplete note rejected",
+    "M7C01 incomplete note rejected",
+    "M7C02 incomplete note rejected"
+  ],
+  "remote": "none; this verification repository is not published",
+  "application_test": {
+    "passed": 70,
+    "failed": 0,
+    "build": "passed",
+    "source": "recette-code/commits-v3-tests.txt"
+  }
+}

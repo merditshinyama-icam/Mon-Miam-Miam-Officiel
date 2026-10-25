@@ -1,0 +1,1743 @@
+[
+  {
+    "lot": "M1",
+    "nom": "Joie Mphoko",
+    "branche": "collab/m1-socle",
+    "commits": [
+      {
+        "id": "C01",
+        "ticket": "MMM-15",
+        "titre": "Dépendances et configuration de construction",
+        "message": "MMM-15 : M1 C01 - integration assistee - Dépendances et configuration de construction",
+        "fichiers": [
+          {
+            "path": ".dockerignore",
+            "sha256": "4b7076d1083b0c97c98eb720581364be9ae646e75cd32ed8e281ba267331e87b"
+          },
+          {
+            "path": ".env.example",
+            "sha256": "b1eda483dfeabbcc63df6ce84cad4f6e03323c472d13f17d20afcff6035d6254"
+          },
+          {
+            "path": ".prettierignore",
+            "sha256": "57c85606ff601e98ff663730ee46c15b44c9514e1c18295592878501b4b6f7b0"
+          },
+          {
+            "path": ".prettierrc.json",
+            "sha256": "f583ff6d8ba542b76af46c4c024a0941b77aee51133bb0f69ec6eb1fa613de7e"
+          },
+          {
+            "path": "Dockerfile",
+            "sha256": "7f3e9a43d8f1d00d6d1d52a066ce88195a1e3682f4cf8be84b7b9d4439ed1390"
+          },
+          {
+            "path": "package-lock.json",
+            "sha256": "cf36395fbf8dc3fa146699021e8ffee452f6a7e4235419e895b890050435b34a"
+          },
+          {
+            "path": "package.json",
+            "sha256": "c61b37995c58710cc5b3661910bd03a5f723c03bca86f071e87ffa37ae110c53"
+          },
+          {
+            "path": "render.yaml",
+            "sha256": "e95f5be91c649e2294ae167b6ce70b41c79c57bb71b464a242b1e5a7d879a8c8"
+          }
+        ],
+        "precedents": [],
+        "attendre": [
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/index.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs"
+        ],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      },
+      {
+        "id": "C02",
+        "ticket": "MMM-14",
+        "titre": "Schéma, sécurité et règles communes",
+        "message": "MMM-14 : M1 C02 - integration assistee - Schéma, sécurité et règles communes",
+        "fichiers": [
+          {
+            "path": "backend/sql/001_initial.sql",
+            "sha256": "5d81a26a48b603a6700d03074f436e2113609884e375e8eb4985522899bf0ce8"
+          },
+          {
+            "path": "backend/sql/002_complaint_review_role.sql",
+            "sha256": "4f1b0671060b52591cdd55c8733986ad94dd7e6fa2e0d1c1e90c7e1fe6d437f2"
+          },
+          {
+            "path": "backend/sql/003_restaurant_onboarding.sql",
+            "sha256": "bcbc9504120cd10904a43defb81d55a9ed6647e0e7cd23c8c01a9862ce299475"
+          },
+          {
+            "path": "backend/sql/004_demo_photos.sql",
+            "sha256": "4ab2ba68283d48403cdb62462e8f1ccb36effe1a1d58101eb2e76c4a9aaa78c8"
+          },
+          {
+            "path": "backend/sql/005_easypay.sql",
+            "sha256": "0ba27dcb7691e6dbb928a7d63f46f11ab48ee025181074625d09c084d1355cef"
+          },
+          {
+            "path": "backend/sql/006_engagement.sql",
+            "sha256": "1a50cfca1d909d9d1b3ce7879cff22ca0534e4eef4e8d0ae24082f32e9afaa2e"
+          },
+          {
+            "path": "backend/sql/007_cahier_complements.sql",
+            "sha256": "7c9e48fb768d4eb4e88c23924cd9eb82adfbeb8fcce839869f43734b09653994"
+          },
+          {
+            "path": "backend/src/database.js",
+            "sha256": "24f88dbac11b95f9e5c0920994990a6674348a3f2f80c92a817e66152086d678"
+          },
+          {
+            "path": "backend/src/domain.js",
+            "sha256": "1d476a67064aba7b49a03bb3af439104c091f5ca6679194b4e03ea0cb37bcd1d"
+          },
+          {
+            "path": "backend/src/security.js",
+            "sha256": "22408e6092dbcdd113400706ec9dcf39cffdf10347e66ccd6783e3449dc8e078"
+          },
+          {
+            "path": "backend/src/seed.js",
+            "sha256": "3bc735cc89784c24197b70ed4e2190452e48660bb5e78eeb57283f8a431bc43f"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml"
+        ],
+        "attendre": [
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs"
+        ],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      },
+      {
+        "id": "C03",
+        "ticket": "MMM-15",
+        "titre": "Assemblage serveur et lancement local",
+        "message": "MMM-15 : M1 C03 - integration assistee - Assemblage serveur et lancement local",
+        "fichiers": [
+          {
+            "path": "backend/src/app.js",
+            "sha256": "bbe92e4367192968839d30602dbeb8ad90a884d9bdb5b882849e6fff9fef0bb8"
+          },
+          {
+            "path": "backend/src/bootstrap-admin.js",
+            "sha256": "49e72a76de43ea24a931e5afa860d6e07d46674524ef2b5c0a41baaa62291a5d"
+          },
+          {
+            "path": "backend/src/create-admin.js",
+            "sha256": "59ec7ec765f95e74b3b2b8d26ba41fee18f4aaee41030c80e9865ecab8b3493e"
+          },
+          {
+            "path": "backend/src/index.js",
+            "sha256": "321b6be04797997376e50042c4e68b4226c2e1801e0b6b8151d22ff2a73691d5"
+          },
+          {
+            "path": "Demarrer.cmd",
+            "sha256": "334213905834cc2a580237ff7ed3b6a59a4097c7680ae1abd51700a51d366a60"
+          },
+          {
+            "path": "scripts/dev.mjs",
+            "sha256": "d6275cd6fae06a5cb9cf51ccf85eeae295126bba7088e6e483bc31d4014508e0"
+          },
+          {
+            "path": "scripts/download-demo-photos.mjs",
+            "sha256": "1b3c7be74b62f24d92312e972b9b6f884f6679ab56b7eecd05f051e6740e94b2"
+          },
+          {
+            "path": "scripts/launch.mjs",
+            "sha256": "40672c150c2fa32d86abc89ba54ef62dcb76d9cfc8baa4f89922ee98739cf787"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js"
+        ],
+        "attendre": [],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      }
+    ],
+    "tickets_responsables": [
+      {
+        "key": "MMM-1",
+        "titre": "[T01] Fixer le périmètre et publier la roadmap",
+        "echeance_prevue": "2026-10-21",
+        "livrable": "L01 - Roadmap V1 et backlog préparés"
+      },
+      {
+        "key": "MMM-2",
+        "titre": "[T02] Rattacher les sept membres à leurs comptes autorisés",
+        "echeance_prevue": "2026-10-22",
+        "livrable": "L02 - Conception et organisation"
+      },
+      {
+        "key": "MMM-3",
+        "titre": "[T03] Créer et organiser le dépôt GitHub et le projet Jira",
+        "echeance_prevue": "2026-10-22",
+        "livrable": "L02 - Conception et organisation"
+      },
+      {
+        "key": "MMM-14",
+        "titre": "[T04] Concevoir les données les permissions et le contrat API",
+        "echeance_prevue": "2026-10-22",
+        "livrable": "L02 - Conception et organisation"
+      },
+      {
+        "key": "MMM-15",
+        "titre": "[T05] Installer le socle et déployer une première version",
+        "echeance_prevue": "2026-10-23",
+        "livrable": "L03 - Maquette web et socle"
+      },
+      {
+        "key": "MMM-44",
+        "titre": "[T34] Corriger les défauts et figer les fonctionnalités",
+        "echeance_prevue": "2026-10-29",
+        "livrable": "L09 - Version finale et dossier de soutenance"
+      },
+      {
+        "key": "MMM-45",
+        "titre": "[T35] Livrer la version finale et une solution de secours",
+        "echeance_prevue": "2026-10-29",
+        "livrable": "L09 - Version finale et dossier de soutenance"
+      },
+      {
+        "key": "MMM-50",
+        "titre": "[T40] Présenter et remettre les livrables",
+        "echeance_prevue": "2026-10-30",
+        "livrable": "L10 - Présentation et remise"
+      },
+      {
+        "key": "MMM-4",
+        "titre": "[Contrôle accès] Vérifier les connexions des sept membres",
+        "echeance_prevue": "2026-10-22",
+        "livrable": "L02 - Conception et organisation"
+      }
+    ]
+  },
+  {
+    "lot": "M2",
+    "nom": "S.Joyce Moyemdjim",
+    "branche": "collab/m2-interface",
+    "commits": [
+      {
+        "id": "C01",
+        "ticket": "MMM-17",
+        "titre": "Images, icônes et crédits",
+        "message": "MMM-17 : M2 C01 - integration assistee - Images, icônes et crédits",
+        "fichiers": [
+          {
+            "path": "frontend/public/assets/bissap.svg",
+            "sha256": "29cfcb08546bc25f500a0343a89ed4998c5bd6c2bb4a66f35e1c3518122a01c0"
+          },
+          {
+            "path": "frontend/public/assets/bissap.webp",
+            "sha256": "9a9e44ff30cbb65bceee9c6fbf1bc62069ceb7646c08e3f4bdd1ff551b62c508"
+          },
+          {
+            "path": "frontend/public/assets/favicon.ico",
+            "sha256": "e43007a370875efc58202ebc7dce0e8fea889b3a631ed4a21c9194ef6293c1df"
+          },
+          {
+            "path": "frontend/public/assets/icon-192.png",
+            "sha256": "038baed8135f0b75a7774f98e3cef59792f10c02cb45338f6144c7a4e916949c"
+          },
+          {
+            "path": "frontend/public/assets/icon-512.png",
+            "sha256": "30d5349dafaa109c227e37dc15572245b21a4ac2c599844f499fa88130766fc0"
+          },
+          {
+            "path": "frontend/public/assets/icon-maskable-512.png",
+            "sha256": "cd5decf3b5467e7365d952c83b5d583030737f3955673202a4f6047c4bb1a25c"
+          },
+          {
+            "path": "frontend/public/assets/moambe.svg",
+            "sha256": "532a0ef62485389111da0ca0818dc96d98998b834321dd27bf45581722ed1652"
+          },
+          {
+            "path": "frontend/public/assets/moambe.webp",
+            "sha256": "5bd6efb40315f90bea598d4c85389584e41ca1207891def9cc933e3ab44a3512"
+          },
+          {
+            "path": "frontend/public/assets/mon-miam-miam.svg",
+            "sha256": "b1ac9533733f768d8e4f57f930e5cb9e5d2c7d578dec360386bcd7028169536d"
+          },
+          {
+            "path": "frontend/public/assets/poisson.svg",
+            "sha256": "5b469b790952341501b5165dd54620196aae72cbec2a8e3b5a2aaa0d625b8c31"
+          },
+          {
+            "path": "frontend/public/assets/poisson.webp",
+            "sha256": "603be22238d3e10096d1ab160b93547a28e2168836dfefa89fbbe409b58ddc69"
+          },
+          {
+            "path": "frontend/public/assets/restaurant.webp",
+            "sha256": "5b8e0b13bab63afb85166ed223df44079e881a89a478a5781a6d5b23d3f0f3ab"
+          },
+          {
+            "path": "frontend/public/assets/samossas.svg",
+            "sha256": "ea8475c284eb3e50edc1664b32dcb87b4847f5488727435c1584d4b17457999d"
+          },
+          {
+            "path": "frontend/public/assets/samossas.webp",
+            "sha256": "8b7c0a177aa49873f7d1bca3237e2e661de26922c75a141f157219a86921d61a"
+          },
+          {
+            "path": "frontend/public/credits-images.txt",
+            "sha256": "adebccaa4de760752bac948fff470736d26c3e89de5b4fade11c2fd8dd307193"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs"
+        ],
+        "attendre": [
+          "frontend/index.html",
+          "frontend/src/api.js",
+          "frontend/src/components.jsx",
+          "frontend/src/context.js",
+          "frontend/src/engagement.jsx",
+          "frontend/src/main.jsx",
+          "frontend/src/styles.css",
+          "frontend/src/team.js",
+          "frontend/vite.config.js"
+        ],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      },
+      {
+        "id": "C02",
+        "ticket": "MMM-17",
+        "titre": "Navigation, thèmes et interface commune",
+        "message": "MMM-17 : M2 C02 - integration assistee - Navigation, thèmes et interface commune",
+        "fichiers": [
+          {
+            "path": "frontend/index.html",
+            "sha256": "6fa49438f5387b03211c24c1c87afc3981ff6b35f16506afb31bb1f8acfade9b"
+          },
+          {
+            "path": "frontend/src/api.js",
+            "sha256": "3106ab962263f48a638375f82aa813622799908a0e194b93739049627891b5d2"
+          },
+          {
+            "path": "frontend/src/components.jsx",
+            "sha256": "b99c3948f30b66df974d8ddfa60410b59c50dfcbc81741cc73e58f17c7751e18"
+          },
+          {
+            "path": "frontend/src/context.js",
+            "sha256": "29cd42a5067fb0aa46761baf974ad46eb26f7358149592b421104b7beb30e1f6"
+          },
+          {
+            "path": "frontend/src/main.jsx",
+            "sha256": "4807328c5325cc2388be19fe703ad5caec50b99e1e1bffe16c2d43def47eb962"
+          },
+          {
+            "path": "frontend/src/styles.css",
+            "sha256": "04e6fe8678cb0bced118abc3b2fff05b00cac85aa58068330168ebba48cd0646"
+          },
+          {
+            "path": "frontend/src/team.js",
+            "sha256": "6d9a012477f58560f9d2b10623e7366668fb0c9581c38d5f4135ed1033c28242"
+          },
+          {
+            "path": "frontend/vite.config.js",
+            "sha256": "ec286d6d879857fe49b780218ccf13d029e321f7b8d28bc7fa86fc21dfb20858"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs",
+          "frontend/public/assets/bissap.svg",
+          "frontend/public/assets/bissap.webp",
+          "frontend/public/assets/favicon.ico",
+          "frontend/public/assets/icon-192.png",
+          "frontend/public/assets/icon-512.png",
+          "frontend/public/assets/icon-maskable-512.png",
+          "frontend/public/assets/moambe.svg",
+          "frontend/public/assets/moambe.webp",
+          "frontend/public/assets/mon-miam-miam.svg",
+          "frontend/public/assets/poisson.svg",
+          "frontend/public/assets/poisson.webp",
+          "frontend/public/assets/restaurant.webp",
+          "frontend/public/assets/samossas.svg",
+          "frontend/public/assets/samossas.webp",
+          "frontend/public/credits-images.txt"
+        ],
+        "attendre": [
+          "frontend/src/engagement.jsx"
+        ],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      },
+      {
+        "id": "C03",
+        "ticket": "MMM-18",
+        "titre": "Présentation des affiches et participations",
+        "message": "MMM-18 : M2 C03 - integration assistee - Présentation des affiches et participations",
+        "fichiers": [
+          {
+            "path": "frontend/src/engagement.jsx",
+            "sha256": "a200546994e8649f083d9125a713eb60519af04aaae16ed37cdf2252c5bc0b15"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs",
+          "frontend/public/assets/bissap.svg",
+          "frontend/public/assets/bissap.webp",
+          "frontend/public/assets/favicon.ico",
+          "frontend/public/assets/icon-192.png",
+          "frontend/public/assets/icon-512.png",
+          "frontend/public/assets/icon-maskable-512.png",
+          "frontend/public/assets/moambe.svg",
+          "frontend/public/assets/moambe.webp",
+          "frontend/public/assets/mon-miam-miam.svg",
+          "frontend/public/assets/poisson.svg",
+          "frontend/public/assets/poisson.webp",
+          "frontend/public/assets/restaurant.webp",
+          "frontend/public/assets/samossas.svg",
+          "frontend/public/assets/samossas.webp",
+          "frontend/public/credits-images.txt",
+          "frontend/index.html",
+          "frontend/src/api.js",
+          "frontend/src/components.jsx",
+          "frontend/src/context.js",
+          "frontend/src/main.jsx",
+          "frontend/src/styles.css",
+          "frontend/src/team.js",
+          "frontend/vite.config.js"
+        ],
+        "attendre": [],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      }
+    ],
+    "tickets_responsables": [
+      {
+        "key": "MMM-16",
+        "titre": "[T06] Concevoir les maquettes Figma et les parcours",
+        "echeance_prevue": "2026-10-22",
+        "livrable": "L02 - Conception et organisation"
+      },
+      {
+        "key": "MMM-17",
+        "titre": "[T07] Créer l'interface commune et les thèmes",
+        "echeance_prevue": "2026-10-23",
+        "livrable": "L03 - Maquette web et socle"
+      },
+      {
+        "key": "MMM-18",
+        "titre": "[T08] Présenter le menu du jour et les affiches commerciales",
+        "echeance_prevue": "2026-10-26",
+        "livrable": "L06 - Fidélisation et affiches"
+      },
+      {
+        "key": "MMM-40",
+        "titre": "[T30] Permettre la participation aux événements et jeux annoncés",
+        "echeance_prevue": "2026-10-27",
+        "livrable": "L07 - Version fonctionnelle complète"
+      },
+      {
+        "key": "MMM-48",
+        "titre": "[T38] Préparer les diapositives et le scénario de démonstration",
+        "echeance_prevue": "2026-10-29",
+        "livrable": "L09 - Version finale et dossier de soutenance"
+      }
+    ]
+  },
+  {
+    "lot": "M3",
+    "nom": "Ephrem Matuta",
+    "branche": "collab/m3-comptes",
+    "commits": [
+      {
+        "id": "C01",
+        "ticket": "MMM-19",
+        "titre": "Comptes, récupération Resend et formulaire",
+        "message": "MMM-19 : M3 C01 - integration assistee - Comptes, récupération Resend et formulaire",
+        "fichiers": [
+          {
+            "path": "backend/src/auth.js",
+            "sha256": "2154c090349a959393d2586e6e2fa3fb229b398ec94268e43d0343f207eb7451"
+          },
+          {
+            "path": "backend/src/mail.js",
+            "sha256": "4cef381cec403813e7ed15ca7578fd0d5f7f64d1b82aa1e4f14b624b5057ff48"
+          },
+          {
+            "path": "frontend/src/auth.jsx",
+            "sha256": "f04482e43d7e22c07cdfe2332c68332f8cd433c2796e7727a7d0b95a049c3d71"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs",
+          "frontend/public/assets/bissap.svg",
+          "frontend/public/assets/bissap.webp",
+          "frontend/public/assets/favicon.ico",
+          "frontend/public/assets/icon-192.png",
+          "frontend/public/assets/icon-512.png",
+          "frontend/public/assets/icon-maskable-512.png",
+          "frontend/public/assets/moambe.svg",
+          "frontend/public/assets/moambe.webp",
+          "frontend/public/assets/mon-miam-miam.svg",
+          "frontend/public/assets/poisson.svg",
+          "frontend/public/assets/poisson.webp",
+          "frontend/public/assets/restaurant.webp",
+          "frontend/public/assets/samossas.svg",
+          "frontend/public/assets/samossas.webp",
+          "frontend/public/credits-images.txt",
+          "frontend/index.html",
+          "frontend/src/api.js",
+          "frontend/src/components.jsx",
+          "frontend/src/context.js",
+          "frontend/src/main.jsx",
+          "frontend/src/styles.css",
+          "frontend/src/team.js",
+          "frontend/vite.config.js",
+          "frontend/src/engagement.jsx"
+        ],
+        "attendre": [
+          "backend/src/restaurants.js",
+          "frontend/src/onboarding.jsx",
+          "frontend/src/student.jsx"
+        ],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      },
+      {
+        "id": "C02",
+        "ticket": "MMM-21",
+        "titre": "Création des restaurants et administrateurs",
+        "message": "MMM-21 : M3 C02 - integration assistee - Création des restaurants et administrateurs",
+        "fichiers": [
+          {
+            "path": "backend/src/restaurants.js",
+            "sha256": "f5a725d5e71d09ed0d34a9659d4295594c854f751ba5e9f5c25a4b0623b9a46e"
+          },
+          {
+            "path": "frontend/src/onboarding.jsx",
+            "sha256": "8a7280aad6103ae785fd3b1578b0590977b2c3f3ebe15d06f1846df3b0ae8951"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs",
+          "frontend/public/assets/bissap.svg",
+          "frontend/public/assets/bissap.webp",
+          "frontend/public/assets/favicon.ico",
+          "frontend/public/assets/icon-192.png",
+          "frontend/public/assets/icon-512.png",
+          "frontend/public/assets/icon-maskable-512.png",
+          "frontend/public/assets/moambe.svg",
+          "frontend/public/assets/moambe.webp",
+          "frontend/public/assets/mon-miam-miam.svg",
+          "frontend/public/assets/poisson.svg",
+          "frontend/public/assets/poisson.webp",
+          "frontend/public/assets/restaurant.webp",
+          "frontend/public/assets/samossas.svg",
+          "frontend/public/assets/samossas.webp",
+          "frontend/public/credits-images.txt",
+          "frontend/index.html",
+          "frontend/src/api.js",
+          "frontend/src/components.jsx",
+          "frontend/src/context.js",
+          "frontend/src/main.jsx",
+          "frontend/src/styles.css",
+          "frontend/src/team.js",
+          "frontend/vite.config.js",
+          "frontend/src/engagement.jsx",
+          "backend/src/auth.js",
+          "backend/src/mail.js",
+          "frontend/src/auth.jsx"
+        ],
+        "attendre": [
+          "frontend/src/student.jsx"
+        ],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      },
+      {
+        "id": "C03",
+        "ticket": "MMM-22",
+        "titre": "Parcours étudiant, profil et photo",
+        "message": "MMM-22 : M3 C03 - integration assistee - Parcours étudiant, profil et photo",
+        "fichiers": [
+          {
+            "path": "frontend/src/student.jsx",
+            "sha256": "5161a060a12b3f4b0e7b18c48e0f1a6bb9b0b2a5f22ee0536b3394778fb5d654"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs",
+          "frontend/public/assets/bissap.svg",
+          "frontend/public/assets/bissap.webp",
+          "frontend/public/assets/favicon.ico",
+          "frontend/public/assets/icon-192.png",
+          "frontend/public/assets/icon-512.png",
+          "frontend/public/assets/icon-maskable-512.png",
+          "frontend/public/assets/moambe.svg",
+          "frontend/public/assets/moambe.webp",
+          "frontend/public/assets/mon-miam-miam.svg",
+          "frontend/public/assets/poisson.svg",
+          "frontend/public/assets/poisson.webp",
+          "frontend/public/assets/restaurant.webp",
+          "frontend/public/assets/samossas.svg",
+          "frontend/public/assets/samossas.webp",
+          "frontend/public/credits-images.txt",
+          "frontend/index.html",
+          "frontend/src/api.js",
+          "frontend/src/components.jsx",
+          "frontend/src/context.js",
+          "frontend/src/main.jsx",
+          "frontend/src/styles.css",
+          "frontend/src/team.js",
+          "frontend/vite.config.js",
+          "frontend/src/engagement.jsx",
+          "backend/src/auth.js",
+          "backend/src/mail.js",
+          "frontend/src/auth.jsx",
+          "backend/src/restaurants.js",
+          "frontend/src/onboarding.jsx"
+        ],
+        "attendre": [],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      }
+    ],
+    "tickets_responsables": [
+      {
+        "key": "MMM-19",
+        "titre": "[T09] Inscrire et connecter les utilisateurs",
+        "echeance_prevue": "2026-10-23",
+        "livrable": "L03 - Maquette web et socle"
+      },
+      {
+        "key": "MMM-20",
+        "titre": "[T10] Permettre la récupération du mot de passe",
+        "echeance_prevue": "2026-10-24",
+        "livrable": "L04 - Parcours étudiant complet"
+      },
+      {
+        "key": "MMM-21",
+        "titre": "[T11] Appliquer les rôles et gérer les employés",
+        "echeance_prevue": "2026-10-23",
+        "livrable": "L04 - Parcours étudiant complet"
+      },
+      {
+        "key": "MMM-22",
+        "titre": "[T12] Modifier le profil et remplacer sa photo",
+        "echeance_prevue": "2026-10-24",
+        "livrable": "L04 - Parcours étudiant complet"
+      },
+      {
+        "key": "MMM-23",
+        "titre": "[T13] Gérer les préférences cookies et la confidentialité",
+        "echeance_prevue": "2026-10-27",
+        "livrable": "L07 - Version fonctionnelle complète"
+      },
+      {
+        "key": "MMM-46",
+        "titre": "[T36] Finaliser les documentations technique et utilisateur",
+        "echeance_prevue": "2026-10-29",
+        "livrable": "L09 - Version finale et dossier de soutenance"
+      }
+    ]
+  },
+  {
+    "lot": "M4",
+    "nom": "Andréa Nandu",
+    "branche": "collab/m4-commandes",
+    "commits": [
+      {
+        "id": "C01",
+        "ticket": "MMM-26",
+        "titre": "Commandes, totaux et transitions serveur",
+        "message": "MMM-26 : M4 C01 - integration assistee - Commandes, totaux et transitions serveur",
+        "fichiers": [
+          {
+            "path": "backend/src/orders.js",
+            "sha256": "f2c856542597c417bb7ddfafed38db7ce60ff9b760257fdfb0a1772e2b20ef9a"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs",
+          "frontend/public/assets/bissap.svg",
+          "frontend/public/assets/bissap.webp",
+          "frontend/public/assets/favicon.ico",
+          "frontend/public/assets/icon-192.png",
+          "frontend/public/assets/icon-512.png",
+          "frontend/public/assets/icon-maskable-512.png",
+          "frontend/public/assets/moambe.svg",
+          "frontend/public/assets/moambe.webp",
+          "frontend/public/assets/mon-miam-miam.svg",
+          "frontend/public/assets/poisson.svg",
+          "frontend/public/assets/poisson.webp",
+          "frontend/public/assets/restaurant.webp",
+          "frontend/public/assets/samossas.svg",
+          "frontend/public/assets/samossas.webp",
+          "frontend/public/credits-images.txt",
+          "frontend/index.html",
+          "frontend/src/api.js",
+          "frontend/src/components.jsx",
+          "frontend/src/context.js",
+          "frontend/src/main.jsx",
+          "frontend/src/styles.css",
+          "frontend/src/team.js",
+          "frontend/vite.config.js",
+          "frontend/src/engagement.jsx",
+          "backend/src/auth.js",
+          "backend/src/mail.js",
+          "frontend/src/auth.jsx",
+          "backend/src/restaurants.js",
+          "frontend/src/onboarding.jsx",
+          "frontend/src/student.jsx"
+        ],
+        "attendre": [
+          "frontend/src/restaurant.jsx"
+        ],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      },
+      {
+        "id": "C02",
+        "ticket": "MMM-24",
+        "titre": "Interface de gestion du restaurant",
+        "message": "MMM-24 : M4 C02 - integration assistee - Interface de gestion du restaurant",
+        "fichiers": [
+          {
+            "path": "frontend/src/restaurant.jsx",
+            "sha256": "1de5afe44acb8c87dc5a5b6c0cd3c10beed4932b9c6bde365c5b1b8bbac36d81"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs",
+          "frontend/public/assets/bissap.svg",
+          "frontend/public/assets/bissap.webp",
+          "frontend/public/assets/favicon.ico",
+          "frontend/public/assets/icon-192.png",
+          "frontend/public/assets/icon-512.png",
+          "frontend/public/assets/icon-maskable-512.png",
+          "frontend/public/assets/moambe.svg",
+          "frontend/public/assets/moambe.webp",
+          "frontend/public/assets/mon-miam-miam.svg",
+          "frontend/public/assets/poisson.svg",
+          "frontend/public/assets/poisson.webp",
+          "frontend/public/assets/restaurant.webp",
+          "frontend/public/assets/samossas.svg",
+          "frontend/public/assets/samossas.webp",
+          "frontend/public/credits-images.txt",
+          "frontend/index.html",
+          "frontend/src/api.js",
+          "frontend/src/components.jsx",
+          "frontend/src/context.js",
+          "frontend/src/main.jsx",
+          "frontend/src/styles.css",
+          "frontend/src/team.js",
+          "frontend/vite.config.js",
+          "frontend/src/engagement.jsx",
+          "backend/src/auth.js",
+          "backend/src/mail.js",
+          "frontend/src/auth.jsx",
+          "backend/src/restaurants.js",
+          "frontend/src/onboarding.jsx",
+          "frontend/src/student.jsx",
+          "backend/src/orders.js"
+        ],
+        "attendre": [],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      }
+    ],
+    "tickets_responsables": [
+      {
+        "key": "MMM-24",
+        "titre": "[T14] Gérer le menu et la disponibilité des plats",
+        "echeance_prevue": "2026-10-23",
+        "livrable": "L03 - Maquette web et socle"
+      },
+      {
+        "key": "MMM-25",
+        "titre": "[T15] Créer le panier et calculer les totaux",
+        "echeance_prevue": "2026-10-24",
+        "livrable": "L04 - Parcours étudiant complet"
+      },
+      {
+        "key": "MMM-26",
+        "titre": "[T16] Passer une commande sur place ou en livraison",
+        "echeance_prevue": "2026-10-24",
+        "livrable": "L04 - Parcours étudiant complet"
+      },
+      {
+        "key": "MMM-27",
+        "titre": "[T17] Afficher l'historique et le suivi des commandes",
+        "echeance_prevue": "2026-10-24",
+        "livrable": "L04 - Parcours étudiant complet"
+      },
+      {
+        "key": "MMM-51",
+        "titre": "[T41] Consigner les points d'équipe et les bilans de sprint",
+        "echeance_prevue": "2026-10-30",
+        "livrable": "L10 - Présentation et remise"
+      }
+    ]
+  },
+  {
+    "lot": "M5",
+    "nom": "Divin Mushanganya",
+    "branche": "collab/m5-operations",
+    "commits": [
+      {
+        "id": "C01",
+        "ticket": "MMM-29",
+        "titre": "Gestion du personnel, réclamations et statistiques",
+        "message": "MMM-29 : M5 C01 - integration assistee - Gestion du personnel, réclamations et statistiques",
+        "fichiers": [
+          {
+            "path": "backend/src/management.js",
+            "sha256": "ab085d3462c4b14a0f8b079bbfe3c9375a17a9ffc6f7c345e8baea6945468bdd"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs",
+          "frontend/public/assets/bissap.svg",
+          "frontend/public/assets/bissap.webp",
+          "frontend/public/assets/favicon.ico",
+          "frontend/public/assets/icon-192.png",
+          "frontend/public/assets/icon-512.png",
+          "frontend/public/assets/icon-maskable-512.png",
+          "frontend/public/assets/moambe.svg",
+          "frontend/public/assets/moambe.webp",
+          "frontend/public/assets/mon-miam-miam.svg",
+          "frontend/public/assets/poisson.svg",
+          "frontend/public/assets/poisson.webp",
+          "frontend/public/assets/restaurant.webp",
+          "frontend/public/assets/samossas.svg",
+          "frontend/public/assets/samossas.webp",
+          "frontend/public/credits-images.txt",
+          "frontend/index.html",
+          "frontend/src/api.js",
+          "frontend/src/components.jsx",
+          "frontend/src/context.js",
+          "frontend/src/main.jsx",
+          "frontend/src/styles.css",
+          "frontend/src/team.js",
+          "frontend/vite.config.js",
+          "frontend/src/engagement.jsx",
+          "backend/src/auth.js",
+          "backend/src/mail.js",
+          "frontend/src/auth.jsx",
+          "backend/src/restaurants.js",
+          "frontend/src/onboarding.jsx",
+          "frontend/src/student.jsx",
+          "backend/src/orders.js",
+          "frontend/src/restaurant.jsx"
+        ],
+        "attendre": [
+          "backend/src/engagement.js"
+        ],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      },
+      {
+        "id": "C02",
+        "ticket": "MMM-30",
+        "titre": "Avis et participations côté serveur",
+        "message": "MMM-30 : M5 C02 - integration assistee - Avis et participations côté serveur",
+        "fichiers": [
+          {
+            "path": "backend/src/engagement.js",
+            "sha256": "9bd4335b21ab1ee0899a04c98be7212def9d078209253ec1edd8052bb73aaf60"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs",
+          "frontend/public/assets/bissap.svg",
+          "frontend/public/assets/bissap.webp",
+          "frontend/public/assets/favicon.ico",
+          "frontend/public/assets/icon-192.png",
+          "frontend/public/assets/icon-512.png",
+          "frontend/public/assets/icon-maskable-512.png",
+          "frontend/public/assets/moambe.svg",
+          "frontend/public/assets/moambe.webp",
+          "frontend/public/assets/mon-miam-miam.svg",
+          "frontend/public/assets/poisson.svg",
+          "frontend/public/assets/poisson.webp",
+          "frontend/public/assets/restaurant.webp",
+          "frontend/public/assets/samossas.svg",
+          "frontend/public/assets/samossas.webp",
+          "frontend/public/credits-images.txt",
+          "frontend/index.html",
+          "frontend/src/api.js",
+          "frontend/src/components.jsx",
+          "frontend/src/context.js",
+          "frontend/src/main.jsx",
+          "frontend/src/styles.css",
+          "frontend/src/team.js",
+          "frontend/vite.config.js",
+          "frontend/src/engagement.jsx",
+          "backend/src/auth.js",
+          "backend/src/mail.js",
+          "frontend/src/auth.jsx",
+          "backend/src/restaurants.js",
+          "frontend/src/onboarding.jsx",
+          "frontend/src/student.jsx",
+          "backend/src/orders.js",
+          "frontend/src/restaurant.jsx",
+          "backend/src/management.js"
+        ],
+        "attendre": [],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      }
+    ],
+    "tickets_responsables": [
+      {
+        "key": "MMM-28",
+        "titre": "[T18] Préparer servir et livrer les commandes",
+        "echeance_prevue": "2026-10-25",
+        "livrable": "L05 - Opérations et paiement"
+      },
+      {
+        "key": "MMM-29",
+        "titre": "[T19] Traiter les réclamations avec validation du gérant",
+        "echeance_prevue": "2026-10-27",
+        "livrable": "L07 - Version fonctionnelle complète"
+      },
+      {
+        "key": "MMM-30",
+        "titre": "[T20] Recueillir les avis après service ou livraison",
+        "echeance_prevue": "2026-10-27",
+        "livrable": "L07 - Version fonctionnelle complète"
+      },
+      {
+        "key": "MMM-47",
+        "titre": "[T37] Tenir le budget les risques et les informations légales",
+        "echeance_prevue": "2026-10-29",
+        "livrable": "L09 - Version finale et dossier de soutenance"
+      }
+    ]
+  },
+  {
+    "lot": "M6",
+    "nom": "E.Merdi Tshinyama",
+    "branche": "collab/m6-easypay",
+    "commits": [
+      {
+        "id": "C01",
+        "ticket": "MMM-32",
+        "titre": "Adaptateur EasyPay, IPN et tests fournisseur simulé",
+        "message": "MMM-32 : M6 C01 - integration assistee - Adaptateur EasyPay, IPN et tests fournisseur simulé",
+        "fichiers": [
+          {
+            "path": "backend/src/easypay-client.js",
+            "sha256": "babef6566248c9fac68387a4d61bb0300284101bcbf8945a3c235f2ff16c38bf"
+          },
+          {
+            "path": "backend/src/easypay.js",
+            "sha256": "85a40b5c3fce81de7389bcc65f991c28a2647449dea591eb41a8d63a911216e1"
+          },
+          {
+            "path": "backend/test/easypay.test.js",
+            "sha256": "eabe1ecdbc38352a0623c56b46914c94c09fca452be3b12fbb696d511a7027a5"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs",
+          "frontend/public/assets/bissap.svg",
+          "frontend/public/assets/bissap.webp",
+          "frontend/public/assets/favicon.ico",
+          "frontend/public/assets/icon-192.png",
+          "frontend/public/assets/icon-512.png",
+          "frontend/public/assets/icon-maskable-512.png",
+          "frontend/public/assets/moambe.svg",
+          "frontend/public/assets/moambe.webp",
+          "frontend/public/assets/mon-miam-miam.svg",
+          "frontend/public/assets/poisson.svg",
+          "frontend/public/assets/poisson.webp",
+          "frontend/public/assets/restaurant.webp",
+          "frontend/public/assets/samossas.svg",
+          "frontend/public/assets/samossas.webp",
+          "frontend/public/credits-images.txt",
+          "frontend/index.html",
+          "frontend/src/api.js",
+          "frontend/src/components.jsx",
+          "frontend/src/context.js",
+          "frontend/src/main.jsx",
+          "frontend/src/styles.css",
+          "frontend/src/team.js",
+          "frontend/vite.config.js",
+          "frontend/src/engagement.jsx",
+          "backend/src/auth.js",
+          "backend/src/mail.js",
+          "frontend/src/auth.jsx",
+          "backend/src/restaurants.js",
+          "frontend/src/onboarding.jsx",
+          "frontend/src/student.jsx",
+          "backend/src/orders.js",
+          "frontend/src/restaurant.jsx",
+          "backend/src/management.js",
+          "backend/src/engagement.js"
+        ],
+        "attendre": [
+          "scripts/test-mail.mjs"
+        ],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      },
+      {
+        "id": "C02",
+        "ticket": "MMM-20",
+        "titre": "Outil opérateur de vérification Resend",
+        "message": "MMM-20 : M6 C02 - integration assistee - Outil opérateur de vérification Resend",
+        "fichiers": [
+          {
+            "path": "scripts/test-mail.mjs",
+            "sha256": "cfed058b0ce126a37d9a22e1248f9f184a2fcfb69920127169744cd22160d05d"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs",
+          "frontend/public/assets/bissap.svg",
+          "frontend/public/assets/bissap.webp",
+          "frontend/public/assets/favicon.ico",
+          "frontend/public/assets/icon-192.png",
+          "frontend/public/assets/icon-512.png",
+          "frontend/public/assets/icon-maskable-512.png",
+          "frontend/public/assets/moambe.svg",
+          "frontend/public/assets/moambe.webp",
+          "frontend/public/assets/mon-miam-miam.svg",
+          "frontend/public/assets/poisson.svg",
+          "frontend/public/assets/poisson.webp",
+          "frontend/public/assets/restaurant.webp",
+          "frontend/public/assets/samossas.svg",
+          "frontend/public/assets/samossas.webp",
+          "frontend/public/credits-images.txt",
+          "frontend/index.html",
+          "frontend/src/api.js",
+          "frontend/src/components.jsx",
+          "frontend/src/context.js",
+          "frontend/src/main.jsx",
+          "frontend/src/styles.css",
+          "frontend/src/team.js",
+          "frontend/vite.config.js",
+          "frontend/src/engagement.jsx",
+          "backend/src/auth.js",
+          "backend/src/mail.js",
+          "frontend/src/auth.jsx",
+          "backend/src/restaurants.js",
+          "frontend/src/onboarding.jsx",
+          "frontend/src/student.jsx",
+          "backend/src/orders.js",
+          "frontend/src/restaurant.jsx",
+          "backend/src/management.js",
+          "backend/src/engagement.js",
+          "backend/src/easypay-client.js",
+          "backend/src/easypay.js",
+          "backend/test/easypay.test.js"
+        ],
+        "attendre": [],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      }
+    ],
+    "tickets_responsables": [
+      {
+        "key": "MMM-31",
+        "titre": "[T21] Vérifier très tôt l'accès EasyPay et le mode de test",
+        "echeance_prevue": "2026-10-22",
+        "livrable": "L02 - Conception et organisation"
+      },
+      {
+        "key": "MMM-32",
+        "titre": "[T22] Initier un paiement Mobile Money EasyPay en CDF",
+        "echeance_prevue": "2026-10-25",
+        "livrable": "L05 - Opérations et paiement"
+      },
+      {
+        "key": "MMM-33",
+        "titre": "[T23] Vérifier les paiements et fiabiliser les notifications",
+        "echeance_prevue": "2026-10-25",
+        "livrable": "L05 - Opérations et paiement"
+      },
+      {
+        "key": "MMM-34",
+        "titre": "[T24] Gagner et utiliser les points de fidélité",
+        "echeance_prevue": "2026-10-26",
+        "livrable": "L06 - Fidélisation et affiches"
+      },
+      {
+        "key": "MMM-35",
+        "titre": "[T25] Parrainer et récompenser la première commande réussie",
+        "echeance_prevue": "2026-10-26",
+        "livrable": "L06 - Fidélisation et affiches"
+      },
+      {
+        "key": "MMM-36",
+        "titre": "[T26] Configurer les règles et l'expiration des points",
+        "echeance_prevue": "2026-10-27",
+        "livrable": "L07 - Version fonctionnelle complète"
+      }
+    ]
+  },
+  {
+    "lot": "M7",
+    "nom": "J.Pascal Cirhuza",
+    "branche": "collab/m7-statistiques",
+    "commits": [
+      {
+        "id": "C01",
+        "ticket": "MMM-41",
+        "titre": "Régression complète et vérifications GitHub",
+        "message": "MMM-41 : M7 C01 - integration assistee - Régression complète et vérifications GitHub",
+        "fichiers": [
+          {
+            "path": ".github/workflows/quality.yml",
+            "sha256": "407de75dfd268c4e843112b648025a4a9fa6754b2034567c7f07502282320573"
+          },
+          {
+            "path": "backend/test/api.test.js",
+            "sha256": "75c5bcb4c66acf74b223880c56325bc7c13536fd49f469bfb781ef8084552acd"
+          },
+          {
+            "path": "backend/test/complements.test.js",
+            "sha256": "a326270dec01c02ffaf70452556e2e6784768add95aeab6c372b067f609f3f58"
+          },
+          {
+            "path": "backend/test/domain.test.js",
+            "sha256": "5becc7a5d9ddec29cf037df41baf498ff33f40fa535e55e94fd2d97d1b6d23f3"
+          },
+          {
+            "path": "backend/test/engagement.test.js",
+            "sha256": "34bcc485fc3c7a98d975a7b2c016f5f13ceb9125193ecf77f0d7c5e601273417"
+          },
+          {
+            "path": "backend/test/restaurants.test.js",
+            "sha256": "521c8617e0a8e7bee9e22509813e0f62da93722b6b8740484ec2110e8a670b8b"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs",
+          "frontend/public/assets/bissap.svg",
+          "frontend/public/assets/bissap.webp",
+          "frontend/public/assets/favicon.ico",
+          "frontend/public/assets/icon-192.png",
+          "frontend/public/assets/icon-512.png",
+          "frontend/public/assets/icon-maskable-512.png",
+          "frontend/public/assets/moambe.svg",
+          "frontend/public/assets/moambe.webp",
+          "frontend/public/assets/mon-miam-miam.svg",
+          "frontend/public/assets/poisson.svg",
+          "frontend/public/assets/poisson.webp",
+          "frontend/public/assets/restaurant.webp",
+          "frontend/public/assets/samossas.svg",
+          "frontend/public/assets/samossas.webp",
+          "frontend/public/credits-images.txt",
+          "frontend/index.html",
+          "frontend/src/api.js",
+          "frontend/src/components.jsx",
+          "frontend/src/context.js",
+          "frontend/src/main.jsx",
+          "frontend/src/styles.css",
+          "frontend/src/team.js",
+          "frontend/vite.config.js",
+          "frontend/src/engagement.jsx",
+          "backend/src/auth.js",
+          "backend/src/mail.js",
+          "frontend/src/auth.jsx",
+          "backend/src/restaurants.js",
+          "frontend/src/onboarding.jsx",
+          "frontend/src/student.jsx",
+          "backend/src/orders.js",
+          "frontend/src/restaurant.jsx",
+          "backend/src/management.js",
+          "backend/src/engagement.js",
+          "backend/src/easypay-client.js",
+          "backend/src/easypay.js",
+          "backend/test/easypay.test.js",
+          "scripts/test-mail.mjs"
+        ],
+        "attendre": [
+          "CONTRIBUTING.md",
+          "docs/API.md",
+          "docs/ARCHITECTURE.md",
+          "docs/CHANGEMENTS.md",
+          "docs/CREDITS_IMAGES.md",
+          "docs/DEPLOIEMENT_RENDER.md",
+          "docs/EASYPAY_IPN.md",
+          "docs/ENGAGEMENT.md",
+          "docs/ETAT_V0_1.md",
+          "docs/ETAT_V0_2.md",
+          "docs/LOTS_ET_RECETTE.md",
+          "docs/RAPPORT_TESTS_V0_1.md"
+        ],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      },
+      {
+        "id": "C02",
+        "ticket": "MMM-46",
+        "titre": "Documentation de référence et limites",
+        "message": "MMM-46 : M7 C02 - integration assistee - Documentation de référence et limites",
+        "fichiers": [
+          {
+            "path": "CONTRIBUTING.md",
+            "sha256": "8c65a27e79add4e75dc0143191c2941bf8a1bc80aba60f0936f2f798219a2e5e"
+          },
+          {
+            "path": "docs/API.md",
+            "sha256": "0da5f72828b939e70fc09633cd299fbdc28ec8d504ad0b8394c874ac367f58c7"
+          },
+          {
+            "path": "docs/ARCHITECTURE.md",
+            "sha256": "42f286189bb75851e2191d28a8d0bb72d15809c3c840c36d10ac4d06f572a4ee"
+          },
+          {
+            "path": "docs/CHANGEMENTS.md",
+            "sha256": "22f21c80a38b0a9f6714efbe2ddb4105a3de109241a6d857716cac152864fdee"
+          },
+          {
+            "path": "docs/CREDITS_IMAGES.md",
+            "sha256": "adebccaa4de760752bac948fff470736d26c3e89de5b4fade11c2fd8dd307193"
+          },
+          {
+            "path": "docs/DEPLOIEMENT_RENDER.md",
+            "sha256": "e22f0819623ac170c06b4709eada4e5a446475f39dd5d3ef93af4359bd6c9c58"
+          },
+          {
+            "path": "docs/EASYPAY_IPN.md",
+            "sha256": "22b6ad0e10da811dc28e1b7434a14f2c290eb3eadca3558da86259a6342fcb36"
+          },
+          {
+            "path": "docs/ENGAGEMENT.md",
+            "sha256": "63317efc2367547b06d0a1151a885104af9f0050f3c6515112aa62efd9fcd43d"
+          },
+          {
+            "path": "docs/ETAT_V0_1.md",
+            "sha256": "2de3a26e267cc671da256837bcce51df47b80617b765c75fe8698a40ef6864b9"
+          },
+          {
+            "path": "docs/ETAT_V0_2.md",
+            "sha256": "308bec1fa6583719ba204e7d8dcdad0135c1c85c9a6a4d3302a3475c41cae1b7"
+          },
+          {
+            "path": "docs/LOTS_ET_RECETTE.md",
+            "sha256": "5f29feef7fab7e584e17ffdc4afc459e2a41eea992f60ebb7cbb69b3a937b89d"
+          },
+          {
+            "path": "docs/RAPPORT_TESTS_V0_1.md",
+            "sha256": "5576d0c58768e6c3a24eaf696f47b1b6cb4c93a93d667b485cdda6e5f252f3c0"
+          }
+        ],
+        "precedents": [
+          ".dockerignore",
+          ".env.example",
+          ".prettierignore",
+          ".prettierrc.json",
+          "Dockerfile",
+          "package-lock.json",
+          "package.json",
+          "render.yaml",
+          "backend/sql/001_initial.sql",
+          "backend/sql/002_complaint_review_role.sql",
+          "backend/sql/003_restaurant_onboarding.sql",
+          "backend/sql/004_demo_photos.sql",
+          "backend/sql/005_easypay.sql",
+          "backend/sql/006_engagement.sql",
+          "backend/sql/007_cahier_complements.sql",
+          "backend/src/database.js",
+          "backend/src/domain.js",
+          "backend/src/security.js",
+          "backend/src/seed.js",
+          "backend/src/app.js",
+          "backend/src/bootstrap-admin.js",
+          "backend/src/create-admin.js",
+          "backend/src/index.js",
+          "Demarrer.cmd",
+          "scripts/dev.mjs",
+          "scripts/download-demo-photos.mjs",
+          "scripts/launch.mjs",
+          "frontend/public/assets/bissap.svg",
+          "frontend/public/assets/bissap.webp",
+          "frontend/public/assets/favicon.ico",
+          "frontend/public/assets/icon-192.png",
+          "frontend/public/assets/icon-512.png",
+          "frontend/public/assets/icon-maskable-512.png",
+          "frontend/public/assets/moambe.svg",
+          "frontend/public/assets/moambe.webp",
+          "frontend/public/assets/mon-miam-miam.svg",
+          "frontend/public/assets/poisson.svg",
+          "frontend/public/assets/poisson.webp",
+          "frontend/public/assets/restaurant.webp",
+          "frontend/public/assets/samossas.svg",
+          "frontend/public/assets/samossas.webp",
+          "frontend/public/credits-images.txt",
+          "frontend/index.html",
+          "frontend/src/api.js",
+          "frontend/src/components.jsx",
+          "frontend/src/context.js",
+          "frontend/src/main.jsx",
+          "frontend/src/styles.css",
+          "frontend/src/team.js",
+          "frontend/vite.config.js",
+          "frontend/src/engagement.jsx",
+          "backend/src/auth.js",
+          "backend/src/mail.js",
+          "frontend/src/auth.jsx",
+          "backend/src/restaurants.js",
+          "frontend/src/onboarding.jsx",
+          "frontend/src/student.jsx",
+          "backend/src/orders.js",
+          "frontend/src/restaurant.jsx",
+          "backend/src/management.js",
+          "backend/src/engagement.js",
+          "backend/src/easypay-client.js",
+          "backend/src/easypay.js",
+          "backend/test/easypay.test.js",
+          "scripts/test-mail.mjs",
+          ".github/workflows/quality.yml",
+          "backend/test/api.test.js",
+          "backend/test/complements.test.js",
+          "backend/test/domain.test.js",
+          "backend/test/engagement.test.js",
+          "backend/test/restaurants.test.js"
+        ],
+        "attendre": [],
+        "verification": "Syntaxe Node des fichiers .js/.mjs ajoutés ; lecture des imports et des routes. Compilation et tests complets après assemblage des sept lots.",
+        "validation_jira": "Le ticket cité est un lien de traçabilité, pas une déclaration de réalisation complète."
+      }
+    ],
+    "tickets_responsables": [
+      {
+        "key": "MMM-37",
+        "titre": "[T27] Construire les tableaux de bord gérant et administrateur",
+        "echeance_prevue": "2026-10-27",
+        "livrable": "L07 - Version fonctionnelle complète"
+      },
+      {
+        "key": "MMM-38",
+        "titre": "[T28] Afficher les dix meilleurs clients et les filtres de période",
+        "echeance_prevue": "2026-10-27",
+        "livrable": "L07 - Version fonctionnelle complète"
+      },
+      {
+        "key": "MMM-39",
+        "titre": "[T29] Configurer les paramètres du restaurant",
+        "echeance_prevue": "2026-10-27",
+        "livrable": "L07 - Version fonctionnelle complète"
+      },
+      {
+        "key": "MMM-41",
+        "titre": "[T31] Exécuter la régression métier et les contrôles de sécurité",
+        "echeance_prevue": "2026-10-27",
+        "livrable": "L07 - Version fonctionnelle complète"
+      },
+      {
+        "key": "MMM-42",
+        "titre": "[T32] Tester les parcours complets et plusieurs navigateurs",
+        "echeance_prevue": "2026-10-28",
+        "livrable": "L08 - Bêta et rapport de recette"
+      },
+      {
+        "key": "MMM-43",
+        "titre": "[T33] Faire la bêta et consigner la recette des utilisateurs",
+        "echeance_prevue": "2026-10-28",
+        "livrable": "L08 - Bêta et rapport de recette"
+      },
+      {
+        "key": "MMM-49",
+        "titre": "[T39] Répéter la soutenance avec les sept membres",
+        "echeance_prevue": "2026-10-29",
+        "livrable": "L09 - Version finale et dossier de soutenance"
+      },
+      {
+        "key": "MMM-52",
+        "titre": "[T42] Tenir les dates prévues et réelles des livrables",
+        "echeance_prevue": "2026-10-30",
+        "livrable": "L10 - Présentation et remise"
+      }
+    ]
+  }
+]
