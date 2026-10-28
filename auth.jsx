@@ -101,8 +101,8 @@ export function Auth({ mode }) {
         )}
         {forgot && catalog?.emailRecoveryMode === 'test' && (
           <p className="notice">
-            Pour cette démonstration étudiante, la récupération est réservée à
-            merdi.tshinyama@2030.ulc-icam.com. Les autres comptes doivent contacter le responsable.
+            L’envoi des e-mails est en phase de test : seule l’adresse du responsable du projet peut
+            recevoir le lien pour le moment.
           </p>
         )}
         <form onSubmit={submit} key={mode}>

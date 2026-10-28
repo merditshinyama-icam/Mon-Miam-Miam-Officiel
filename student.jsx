@@ -451,7 +451,6 @@ export function Payment() {
   const [refresh, setRefresh] = useState(0),
     [busy, setBusy] = useState(false),
     [error, setError] = useState('');
-  const [phone, setPhone] = useState(() => (user?.phone || '').replace(/^\+243|^0/, ''));
   const { data, error: loadError } = useResource(() => api(`/orders/${id}`), [id, refresh], true);
   const sandbox = catalog?.paymentMode === 'easypay-sandbox';
   const demo = catalog?.paymentMode === 'demo';
@@ -472,7 +471,6 @@ export function Payment() {
   async function initiate(e) {
     e.preventDefault();
     const body = Object.fromEntries(new FormData(e.currentTarget));
-    body.phone = `+243${body.phone}`;
     await run(() => api(`/orders/${id}/payments`, { method: 'POST', body }));
   }
   return (
@@ -592,46 +590,15 @@ export function Payment() {
                       <option value="orange">Orange Money</option>
                     </select>
                   </label>
-                  <div className="field">
-                    <label htmlFor="payment-phone">Numéro Mobile Money</label>
-                    <span className="phone-input">
-                      <span className="phone-prefix" aria-hidden="true">
-                        +243
-                      </span>
-                      <input
-                        id="payment-phone"
-                        type="tel"
-                        inputMode="numeric"
-                        name="phone"
-                        value={phone}
-                        onChange={(event) =>
-                          setPhone(event.target.value.replace(/\D/g, '').slice(0, 9))
-                        }
-                        onPaste={(event) => {
-                          event.preventDefault();
-                          let value = event.clipboardData.getData('text').replace(/\D/g, '');
-                          if (value.length === 12 && value.startsWith('243'))
-                            value = value.slice(3);
-                          else if (value.length === 10 && value.startsWith('0'))
-                            value = value.slice(1);
-                          if (/^[1-9][0-9]{8}$/.test(value)) setPhone(value);
-                          else
-                            setError(
-                              'Saisissez les 9 chiffres du numéro après +243, sans le 0 initial.',
-                            );
-                        }}
-                        placeholder="9 chiffres"
-                        required
-                        maxLength={9}
-                        pattern="[1-9][0-9]{8}"
-                        aria-describedby="payment-phone-help"
-                        autoComplete="tel-national"
-                      />
-                    </span>
-                    <small id="payment-phone-help">
-                      RDC (+243) : saisissez les 9 chiffres suivants, sans le 0 initial.
-                    </small>
-                  </div>
+                  <Field
+                    label="Numéro Mobile Money"
+                    type="tel"
+                    name="phone"
+                    defaultValue={user.phone}
+                    placeholder="+243810000000"
+                    required
+                    pattern="(\+243|0)[0-9]{9}"
+                  />
                   {order.payment_status === 'failed' && (
                     <Alert>Cette tentative a échoué. Vous pouvez réessayer.</Alert>
                   )}
@@ -820,11 +787,7 @@ export function Orders() {
   );
 }
 export function Loyalty() {
-  const [refresh, setRefresh] = useState(0);
-  const { data, error } = useResource(() => api('/loyalty'), [refresh]);
-  const [generating, setGenerating] = useState(false);
-  const [generationError, setGenerationError] = useState('');
-  const [generated, setGenerated] = useState('');
+  const { data, error } = useResource(() => api('/loyalty'), []);
   const [copied, setCopied] = useState(false);
   return (
     <>
@@ -857,41 +820,12 @@ export function Loyalty() {
                 Invitez un ami avec votre code. Sa première commande payée et honorée vous rapporte{' '}
                 {data.rules.referralBonus} points.
               </p>
-              <div className="referral-code">
-                {generated || data.code || 'Votre code vous attend'}
-              </div>
-              <button
-                className="button full"
-                disabled={generating}
-                onClick={async () => {
-                  setGenerating(true);
-                  setGenerationError('');
-                  setCopied(false);
-                  try {
-                    const result = await api('/referral/generate', { method: 'POST' });
-                    setGenerated(result.code);
-                    setRefresh((value) => value + 1);
-                  } catch (error) {
-                    setGenerationError(error.message);
-                  } finally {
-                    setGenerating(false);
-                  }
-                }}
-              >
-                {generating ? 'Préparation du code…' : 'Générer mon code de parrainage'}
-              </button>
-              <Alert>{generationError}</Alert>
-              {generated && (
-                <p role="status">
-                  Votre code est prêt à partager. Il reste identique pour préserver vos invitations.
-                </p>
-              )}
+              <div className="referral-code">{data.code}</div>
               <button
                 className="button outline full"
-                disabled={!(generated || data.code)}
                 onClick={async () => {
                   try {
-                    await navigator.clipboard.writeText(generated || data.code);
+                    await navigator.clipboard.writeText(data.code);
                     setCopied(true);
                   } catch {
                     setCopied(false);
@@ -1444,43 +1378,6 @@ export function Privacy() {
     <>
       <PageTitle title="Confidentialité et mentions du projet" />
       <article className="panel prose">
-        <p className="notice">
-          Version du 27 octobre 2026. Démonstration pédagogique réservée aux étudiants. Les
-          simulations ne constituent ni un encaissement ni une commande à livrer réellement.
-        </p>
-        <h2>Conditions d’utilisation et de commande</h2>
-        <p>
-          Utilisez une adresse e-mail qui vous appartient, ne partagez pas votre mot de passe et ne
-          publiez pas de données concernant un tiers sans son accord. Les photos doivent vous
-          appartenir ou être utilisées avec une autorisation suffisante. Les contenus injurieux,
-          frauduleux ou portant atteinte à la vie privée peuvent être retirés par l’équipe après
-          vérification.
-        </p>
-        <p>
-          Le menu indique les prix en CDF. Avant validation, le récapitulatif précise les quantités,
-          la réduction éventuelle et les frais de livraison. Le serveur recalcule le total. Vérifiez
-          votre adresse et votre heure d’arrivée. Une commande en attente ne prouve pas un paiement
-          ; seule une confirmation vérifiée du fournisseur peut le confirmer en mode réel.
-        </p>
-        <p>
-          Une commande non payée peut être annulée lorsque son état le permet. Une commande payée ne
-          peut pas être remboursée automatiquement depuis cette application : contactez le
-          restaurant avec sa référence. Une erreur ou un refus ne justifie pas de répéter un débit.
-          Le règlement d’un litige de paiement ou un remboursement réel doit être confirmé avec le
-          restaurant et le fournisseur.
-        </p>
-        <p>
-          Les points, leur expiration et les seuils de réduction sont affichés dans « Fidélité ».
-          Les récompenses sont attribuées après une commande payée et servie ou livrée. Les
-          invitations utilisent un code personnel stable ; le bonus du parrain dépend de la première
-          commande éligible du filleul. Les points ne sont pas une somme d’argent retirable.
-        </p>
-        <p>
-          Pour une réclamation, utilisez l’aide du site ou le contact ci-dessous en indiquant la
-          référence de commande, la date et le problème, sans communiquer de mot de passe ni de code
-          PIN. L’équipe examine la demande ; une réponse proposée par un employé est soumise à
-          validation avant publication.
-        </p>
         <h2>Éditeur pédagogique</h2>
         <p>
           Mon Miam Miam est un projet de cours de Développement Web réalisé par le groupe
@@ -1522,16 +1419,6 @@ export function Privacy() {
           automatiquement copiées sur le site déployé. Si l’envoi de récupération est configuré,
           Resend reçoit l’adresse destinataire et le lien temporaire demandé.
         </p>
-        <p>
-          Dans cette version étudiante, l’envoi de récupération est limité à
-          merdi.tshinyama@2030.ulc-icam.com. Les liens ne sont pas redirigés vers cette adresse pour
-          les autres comptes. Leur propriétaire doit contacter le responsable pour une assistance.
-        </p>
-        <p>
-          Vos avis et votre nom au classement peuvent être visibles selon vos choix ; les
-          réclamations et les données de commande restent accessibles aux personnes habilitées. Le
-          groupe ne vend pas les données et n’utilise pas de publicité ciblée.
-        </p>
         <h2>Paiements</h2>
         <p>
           {mode === 'demo'
@@ -1563,25 +1450,6 @@ export function Privacy() {
           suppression automatique générale des comptes ou commandes n’est actuellement promise.
         </p>
         <h2>Cadre et limites de cette version</h2>
-        <p>
-          Le cadre de référence en RDC est l’ordonnance-loi n° 23/010 du 13 mars 2023 portant Code
-          du numérique, notamment les dispositions relatives aux données personnelles. L’hébergement
-          à l’étranger doit faire l’objet d’une vérification des formalités et conditions de
-          transfert applicables avant une ouverture au public. Le consentement seul ne remplace pas
-          ces démarches.
-        </p>
-        <p>
-          <a
-            href="https://are.gouv.cd/download/ordonnance-loi-23-010-du-13-mars-portant-code-du-numerique/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Consulter le Code du numérique sur le site de l’ARE
-          </a>
-          . Le guide juridique du projet distingue les mesures en place, les opérations manuelles et
-          les validations restant à obtenir. Aucune autorisation administrative ni immatriculation
-          commerciale n’est revendiquée.
-        </p>
         <p>
           Les photos d’illustration et leurs sources sont indiquées dans les crédits. Le code et les
           documents ont été produits avec l’assistance de Codex ; les membres assurent leur revue,
