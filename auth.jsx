@@ -1,22 +1,23 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { api } from './api';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { api, restaurantBase } from './api';
 import { useApp } from './context';
 import { Alert, Field, BusyButton, Icon } from './components';
 
 export function Auth({ mode }) {
   const { setUser, catalog } = useApp();
   const branding = catalog?.restaurant?.branding || {};
-  const navigate = useNavigate(),
-    location = useLocation();
+  const navigate = useNavigate();
   const [params] = useSearchParams();
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
     [message, setMessage] = useState('');
+  const [accounts, setAccounts] = useState([]);
   useEffect(() => {
     setError('');
     setMessage('');
     setBusy(false);
+    setAccounts([]);
   }, [mode]);
   const register = mode === 'register',
     forgot = mode === 'forgot',
@@ -47,10 +48,22 @@ export function Auth({ mode }) {
         const result = await api('/auth/forgot-password', { method: 'POST', body: values });
         setMessage(result.message);
       } else {
-        const { user } = await api(`/auth/${mode}`, { method: 'POST', body: values });
+        const result = await api(`/auth/${mode}`, { method: 'POST', body: values });
+        if (result.accounts) {
+          setAccounts(result.accounts);
+          setMessage(
+            'Plusieurs espaces correspondent à ces identifiants. Choisissez celui à ouvrir.',
+          );
+          return;
+        }
+        const { user } = result;
         setUser(user);
-        const from = location.state?.from;
-        navigate(user.role === 'student' ? from || '/' : '/restaurant', { replace: true });
+        if (user.role !== 'student' && result.path !== restaurantBase) {
+          window.location.assign(`${result.path}/restaurant`);
+        } else
+          navigate(user.role === 'student' ? '/restaurants' : '/restaurant', {
+            replace: true,
+          });
       }
     } catch (e) {
       setError(e.message);
@@ -101,8 +114,8 @@ export function Auth({ mode }) {
         )}
         {forgot && catalog?.emailRecoveryMode === 'test' && (
           <p className="notice">
-            L’envoi des e-mails est en phase de test : seule l’adresse du responsable du projet peut
-            recevoir le lien pour le moment.
+            Pour cette démonstration étudiante, la récupération est réservée à
+            merdi.tshinyama@2030.ulc-icam.com. Les autres comptes doivent contacter le responsable.
           </p>
         )}
         <form onSubmit={submit} key={mode}>
@@ -173,6 +186,26 @@ export function Auth({ mode }) {
           )}
           <Alert>{error}</Alert>
           <Alert type="success">{message}</Alert>
+          {accounts.length > 0 && (
+            <fieldset className="panel">
+              <legend>Choisissez votre espace</legend>
+              {accounts.map((account) => (
+                <label className="check-field" key={account.id}>
+                  <input type="radio" name="accountId" value={account.id} required />
+                  <span>
+                    {account.name} ·{' '}
+                    {account.role === 'student'
+                      ? 'Étudiant'
+                      : account.role === 'admin'
+                        ? 'Administrateur'
+                        : account.role === 'manager'
+                          ? 'Gérant'
+                          : 'Employé'}
+                  </span>
+                </label>
+              ))}
+            </fieldset>
+          )}
           <BusyButton className="button full" busy={busy}>
             {register
               ? 'Créer mon compte'

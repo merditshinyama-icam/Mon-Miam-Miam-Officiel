@@ -8,6 +8,7 @@ import multer from 'multer';
 import sharp from 'sharp';
 import { AppError, RESTAURANT, THEMES, publicUser, requireCondition, audit } from './domain.js';
 import { hashPassword, verifyPassword, token, digest, cookieToken } from './security.js';
+import { identityId, studentInRestaurant } from './student-identity.js';
 
 export const passwordSchema = z
   .string()
@@ -48,7 +49,7 @@ export async function startSession(db, config, res, user) {
   const secret = token();
   await db.query(
     `INSERT INTO sessions(token_hash,user_id,expires_at) VALUES($1,$2,NOW()+INTERVAL '7 days')`,
-    [digest(secret), user.id],
+    [digest(secret), user.role === 'student' ? identityId(user) : user.id],
   );
   res.cookie('mmm_session', secret, cookieOptions(config.production));
   return publicUser(user);
@@ -70,6 +71,15 @@ export function authRouter(db, config) {
       .parse(req.body);
     const hash = await hashPassword(body.password);
     const user = await db.transaction(async (tx) => {
+      const { rows: duplicate } = await tx.query(
+        "SELECT id FROM users WHERE email=$1 AND role='student' LIMIT 1",
+        [body.email],
+      );
+      requireCondition(
+        !duplicate.length,
+        409,
+        'Votre compte étudiant existe déjà. Connectez-vous pour choisir un restaurant.',
+      );
       let referrer = null;
       if (body.referralCode) {
         const { rows } = await tx.query(
@@ -107,24 +117,52 @@ export function authRouter(db, config) {
       ]);
       user.theme = req.restaurant.branding.defaultTheme;
     }
-    res.status(201).json({ user: await startSession(db, config, res, user) });
+    res.status(201).json({
+      user: await startSession(db, config, res, user),
+      path: req.restaurant.id === RESTAURANT ? '' : `/r/${req.restaurant.slug}`,
+    });
   });
   router.post('/login', authLimit, async (req, res) => {
     const body = z
-      .object({ email: emailSchema, password: z.string().min(1).max(128) })
+      .object({
+        email: emailSchema,
+        password: z.string().min(1).max(128),
+        accountId: z.string().max(100).optional(),
+      })
       .strict()
       .parse(req.body);
-    const {
-      rows: [user],
-    } = await db.query('SELECT * FROM users WHERE email=$1 AND restaurant_id=$2', [
-      body.email,
-      req.restaurant.id,
-    ]);
-    // Also perform a password hash for unknown accounts to avoid a fast account-existence check.
-    const hash = user?.password_hash || (await dummyHash);
-    const valid = await verifyPassword(body.password, hash);
-    requireCondition(user?.active && valid, 401, 'Adresse e-mail ou mot de passe incorrect.');
-    res.json({ user: await startSession(db, config, res, user) });
+    const { rows: candidates } = await db.query(
+      `SELECT u.*,r.slug AS account_slug,r.name AS account_restaurant_name
+       FROM users u JOIN restaurants r ON r.id=u.restaurant_id
+       WHERE u.email=$1 AND u.student_identity_id IS NULL
+       ORDER BY (u.restaurant_id=$2) DESC,u.id`,
+      [body.email, req.restaurant.id],
+    );
+    const matches = [];
+    if (!candidates.length) await verifyPassword(body.password, await dummyHash);
+    for (const candidate of candidates) {
+      const valid = await verifyPassword(body.password, candidate.password_hash);
+      if (valid && candidate.active) matches.push(candidate);
+    }
+    const account = (user) => ({
+      id: user.id,
+      role: user.role,
+      name: user.account_restaurant_name,
+      path: user.restaurant_id === RESTAURANT ? '' : `/r/${user.account_slug}`,
+    });
+    if (matches.length > 1 && !body.accountId) return res.json({ accounts: matches.map(account) });
+    const user = body.accountId ? matches.find((u) => u.id === body.accountId) : matches[0];
+    requireCondition(user, 401, 'Adresse e-mail ou mot de passe incorrect.');
+    const { account_slug, account_restaurant_name, ...safeProfile } = user;
+    res.json({
+      user: await startSession(db, config, res, safeProfile),
+      path:
+        user.role === 'student'
+          ? req.restaurant.id === RESTAURANT
+            ? ''
+            : `/r/${req.restaurant.slug}`
+          : account(user).path,
+    });
   });
   router.post('/logout', async (req, res) => {
     const secret = cookieToken(req);
@@ -145,21 +183,22 @@ export function authRouter(db, config) {
       })
       .strict()
       .parse(req.body);
-    const {
-      rows: [user],
-    } = await db.query(
-      'UPDATE users SET name=$1,phone=$2,theme=$3,dark=$4,public_ranking=$5,delivery_address=COALESCE($7,delivery_address) WHERE id=$6 RETURNING *',
+    await db.query(
+      'UPDATE users SET name=$1,phone=$2,theme=$3,dark=$4,public_ranking=$5,delivery_address=COALESCE($7,delivery_address) WHERE id=$6 OR student_identity_id=$6 RETURNING *',
       [
         body.name,
         body.phone,
         body.theme,
         body.dark,
         body.public_ranking,
-        req.user.id,
+        req.user.role === 'student' ? identityId(req.user) : req.user.id,
         body.deliveryAddress ?? null,
       ],
     );
-    res.json({ user: publicUser(user) });
+    const {
+      rows: [profile],
+    } = await db.query('SELECT * FROM users WHERE id=$1', [req.user.id]);
+    res.json({ user: publicUser(profile) });
   });
   router.post('/me/photo', requireAuth, upload.single('photo'), async (req, res) => {
     requireCondition(req.file, 400, 'Choisissez une image JPEG, PNG ou WebP.');
@@ -182,11 +221,16 @@ export function authRouter(db, config) {
       if (error instanceof AppError) throw error;
       throw new AppError(400, 'Image illisible ou dimensions trop grandes.');
     }
-    await db.query('UPDATE users SET photo=$1 WHERE id=$2', [photo, req.user.id]);
+    await db.query('UPDATE users SET photo=$1 WHERE id=$2 OR student_identity_id=$2', [
+      photo,
+      req.user.role === 'student' ? identityId(req.user) : req.user.id,
+    ]);
     res.json({ photo });
   });
   router.delete('/me/photo', requireAuth, async (req, res) => {
-    await db.query('UPDATE users SET photo=NULL WHERE id=$1', [req.user.id]);
+    await db.query('UPDATE users SET photo=NULL WHERE id=$1 OR student_identity_id=$1', [
+      req.user.role === 'student' ? identityId(req.user) : req.user.id,
+    ]);
     res.status(204).end();
   });
   router.post('/forgot-password', authLimit, async (req, res) => {
@@ -257,8 +301,22 @@ export function authRouter(db, config) {
         [digest(body.token), req.restaurant.id],
       );
       requireCondition(reset, 400, 'Lien expiré ou déjà utilisé.');
-      await tx.query('UPDATE users SET password_hash=$1 WHERE id=$2', [hash, reset.user_id]);
-      await tx.query('DELETE FROM sessions WHERE user_id=$1', [reset.user_id]);
+      const {
+        rows: [account],
+      } = await tx.query('SELECT * FROM users WHERE id=$1', [reset.user_id]);
+      const accountId = identityId(account);
+      await tx.query('UPDATE users SET password_hash=$1 WHERE id=$2 OR student_identity_id=$2', [
+        hash,
+        accountId,
+      ]);
+      await tx.query(
+        'DELETE FROM sessions WHERE user_id IN (SELECT id FROM users WHERE id=$1 OR student_identity_id=$1)',
+        [accountId],
+      );
+      await tx.query(
+        'DELETE FROM password_resets WHERE user_id IN (SELECT id FROM users WHERE id=$1 OR student_identity_id=$1)',
+        [accountId],
+      );
       await audit(tx, reset.user_id, 'password_reset', reset.user_id);
     });
     res.json({ message: 'Mot de passe modifié. Vous pouvez vous connecter.' });
@@ -267,14 +325,22 @@ export function authRouter(db, config) {
 }
 export async function loadUser(db, req, _res, next) {
   try {
+    // These endpoints do not require a restaurant membership. In particular a
+    // stale/conflicting legacy session must never prevent logging out or in.
+    if (['/auth/login', '/auth/logout', '/auth/register', '/restaurants'].includes(req.path))
+      return next();
     const secret = cookieToken(req);
     if (secret && /^[a-f0-9]{64}$/.test(secret)) {
       const { rows } = await db.query(
         `SELECT u.* FROM sessions s JOIN users u ON u.id=s.user_id
-        WHERE s.token_hash=$1 AND s.expires_at>NOW() AND u.active=TRUE AND u.restaurant_id=$2`,
-        [digest(secret), req.restaurant.id],
+        WHERE s.token_hash=$1 AND s.expires_at>NOW() AND u.active=TRUE`,
+        [digest(secret)],
       );
-      req.user = rows[0];
+      const user = rows[0];
+      if (user?.role === 'student') {
+        req.user = await studentInRestaurant(db, user, req.restaurant.id);
+        if (!req.user.active) req.user = undefined;
+      } else if (user?.restaurant_id === req.restaurant.id) req.user = user;
     }
     next();
   } catch (error) {

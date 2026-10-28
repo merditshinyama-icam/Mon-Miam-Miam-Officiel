@@ -54,6 +54,14 @@ export async function resolveRestaurant(db, req, _res, next) {
 }
 export function restaurantsRouter(db, config) {
   const router = Router();
+  router.get('/restaurants', async (_req, res) => {
+    const { rows } = await db.query(
+      `SELECT id,name,slug,settings->>'location' AS location,
+       settings->>'openingHours' AS opening_hours,branding->>'logo' AS logo,
+       branding->>'coverImage' AS cover FROM restaurants ORDER BY LOWER(name),id`,
+    );
+    res.json({ restaurants: rows.map((r) => ({ ...r, path: restaurantPath(r) })) });
+  });
   const upload = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: 3 * 1024 * 1024, files: 1 },
