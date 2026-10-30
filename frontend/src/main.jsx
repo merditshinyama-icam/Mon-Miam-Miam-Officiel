@@ -26,6 +26,7 @@ import {
 import { Auth } from './auth';
 import { Kitchen, ManageMenu, Stats, Staff, Settings } from './restaurant';
 import { NewRestaurant } from './onboarding';
+import { Restaurants } from './restaurants';
 import { Announcements, PointAdjustments } from './engagement';
 import './styles.css';
 
@@ -160,6 +161,7 @@ function App() {
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/register" element={<Auth mode="register" />} />
           <Route path="/restaurants/new" element={<NewRestaurant />} />
+          <Route path="/restaurants" element={<Restaurants />} />
           <Route path="/forgot" element={<Auth mode="forgot" />} />
           <Route path="/reset" element={<Auth mode="reset" />} />
           <Route path="/cart" element={<Cart />} />

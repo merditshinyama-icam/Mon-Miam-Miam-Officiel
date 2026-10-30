@@ -229,6 +229,7 @@ export function Layout({ user, cartCount, onLogout, children }) {
     : [
         ['/', 'Menu', 'home'],
         ['/orders', 'Commandes', 'bag'],
+        ['/restaurants', 'Restaurants', 'bag'],
         ['/loyalty', 'Fidélité', 'gift'],
         ['/profile', 'Profil', 'user'],
         ['/events', 'Rendez-vous', 'gift'],
