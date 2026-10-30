@@ -262,18 +262,6 @@ export function ManageMenu() {
           ))}
         </div>
       </section>
-      {removing && (
-        <Modal title="Supprimer ce membre de l’équipe ?" onClose={() => setRemoving(null)}>
-          <p>
-            {removing.name} perdra son accès et disparaîtra de la liste active. L’historique est
-            conservé ; le compte pourra être restauré.
-          </p>
-          <Alert>{error}</Alert>
-          <BusyButton busy={busy} className="button" onClick={() => removeOrRestore(removing)}>
-            Confirmer la suppression
-          </BusyButton>
-        </Modal>
-      )}
       {edit && (
         <Modal
           title={edit.id ? 'Modifier l’article' : 'Un nouveau plat à partager'}
