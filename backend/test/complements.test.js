@@ -64,6 +64,7 @@ test('envoi Resend : destination fixe, secret dans l’en-tête uniquement, aucu
 test('récupération en production avec transport configuré : lien transmis, jeton haché, réponse générique', async () => {
   const messages = [];
   const prod = createApp(db, {
+    mailTestRecipient: null, // Explicitly test unrestricted mechanics in memory only.
     production: true,
     paymentMode: 'disabled',
     origin: 'https://miam.example',
@@ -115,6 +116,23 @@ test('récupération de test limitée au destinataire autorisé avec réponse g�
     messages.map((m) => m.to),
     ['student@demo.miam.test'],
   );
+  assert.equal((await request(restricted).get('/api/catalog')).body.emailRecoveryMode, 'test');
+});
+
+test('sans variable destinataire, la démonstration ne transmet pas les liens des autres comptes', async () => {
+  const messages = [];
+  const restricted = createApp(db, {
+    production: true,
+    paymentMode: 'disabled',
+    origin: 'https://miam.example',
+    mailer: async (message) => messages.push(message),
+  });
+  const response = await request(restricted)
+    .post('/api/auth/forgot-password')
+    .set({ 'X-Requested-With': 'MonMiamMiam', Origin: 'https://miam.example' })
+    .send({ email: 'admin@demo.miam.test' });
+  assert.equal(response.status, 200);
+  assert.equal(messages.length, 0);
   assert.equal((await request(restricted).get('/api/catalog')).body.emailRecoveryMode, 'test');
 });
 test('aperçu de démonstration activable sans autoriser la simulation serveur d’un paiement réel', async () => {

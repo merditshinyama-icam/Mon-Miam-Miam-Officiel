@@ -38,6 +38,7 @@ before(async () => {
     origin: 'http://localhost:5173',
     paymentMode: 'demo',
     dataDir,
+    mailTestRecipient: null, // Isolated test of the generic reset mechanism.
   });
   [student, employee, manager, admin] = ['student', 'employee', 'manager', 'admin'].map(() =>
     request.agent(app),
@@ -64,6 +65,36 @@ after(async () => {
 test('le menu est public et le profil nécessite une session', async () => {
   assert.equal((await request(app).get('/api/catalog')).body.dishes.length, 4);
   assert.equal((await request(app).get('/api/auth/me')).status, 401);
+});
+
+test('le bouton parrainage fournit un code stable utilisable à l’inscription', async () => {
+  const first = await send(student, 'post', '/referral/generate');
+  assert.equal(first.status, 200);
+  assert.match(first.body.code, /^MIAM-/);
+  const repeated = await Promise.all([
+    send(student, 'post', '/referral/generate'),
+    send(student, 'post', '/referral/generate'),
+  ]);
+  for (const result of repeated) {
+    assert.equal(result.status, 200);
+    assert.equal(result.body.code, first.body.code);
+  }
+  const email = `${randomUUID()}@example.test`;
+  const signup = await send(request.agent(app), 'post', '/auth/register', {
+    name: 'Filleul du bouton',
+    email,
+    phone: '+243810000003',
+    password,
+    referralCode: first.body.code,
+  });
+  assert.equal(signup.status, 201, JSON.stringify(signup.body));
+  const {
+    rows: [user],
+  } = await db.query('SELECT referrer_id,referral_code FROM users WHERE email=$1', [email]);
+  assert.equal(user.referrer_id, studentId);
+  assert.notEqual(user.referral_code, first.body.code);
+  assert.equal((await send(employee, 'post', '/referral/generate')).status, 403);
+  assert.equal((await send(request(app), 'post', '/referral/generate')).status, 401);
 });
 test('la session utilise un cookie HttpOnly et la réponse ne contient pas le mot de passe', async () => {
   const res = await send(request.agent(app), 'post', '/auth/login', {

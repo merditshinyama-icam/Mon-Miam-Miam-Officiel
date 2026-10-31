@@ -37,7 +37,13 @@ before(async () => {
   dataDir = await mkdtemp(path.join(os.tmpdir(), 'mmm-restaurants-'));
   db = await openDatabase({ memory: true });
   await seedDemo(db, demoPassword);
-  app = createApp(db, { production: false, origin: headers.Origin, paymentMode: 'demo', dataDir });
+  app = createApp(db, {
+    production: false,
+    origin: headers.Origin,
+    paymentMode: 'demo',
+    dataDir,
+    mailTestRecipient: null,
+  });
   owner = request.agent(app);
   defaultAdmin = request.agent(app);
   await call(
