@@ -119,7 +119,7 @@ test('un identifiant déjà utilisé refuse la création sans ajouter de compte'
     before,
   );
 });
-test('une session et une connexion ne donnent pas accès à un autre restaurant', async () => {
+test('la connexion retrouve le bon établissement sans donner accès au personnel d’un autre', async () => {
   assert.equal((await call(owner, 'get', '/auth/me')).status, 200);
   assert.equal((await call(owner, 'get', '/auth/me', null, '')).status, 401);
   assert.equal((await call(defaultAdmin, 'get', '/staff')).status, 401);
@@ -131,7 +131,7 @@ test('une session et une connexion ne donnent pas accès à un autre restaurant'
         password: demoPassword,
       })
     ).status,
-    401,
+    200,
   );
   assert.equal((await call(request.agent(app), 'get', '/catalog', null, 'inconnu')).status, 404);
 });
@@ -197,7 +197,7 @@ test('les étudiants sont créés dans le restaurant choisi et ne peuvent pas pr
   customer = request.agent(app);
   const body = {
     name: 'Client du nouveau restaurant',
-    email: 'student@demo.miam.test',
+    email: 'client-restaurant@example.test',
     phone: '+243810000006',
     password: demoPassword,
   };
