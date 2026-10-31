@@ -3,7 +3,7 @@ import { rateLimit } from 'express-rate-limit';
 import { z } from 'zod';
 import { randomUUID, randomBytes } from 'node:crypto';
 import { AppError, requireCondition, audit, RESTAURANT } from './domain.js';
-import { isEasyPay } from './easypay-client.js';
+import { isEasyPay, EASYPAY_REJECTIONS } from './easypay-client.js';
 
 export const publicPayment = (p) => ({
   id: p.id,
@@ -87,10 +87,13 @@ export async function initiateEasyPay(db, config, req, body) {
         "UPDATE orders SET payment_status='failed',updated_at=NOW() WHERE id=$1 AND status='awaiting_payment'",
         [p.order_id],
       );
+      const reason = Object.hasOwn(EASYPAY_REJECTIONS, result.reason) ? result.reason : 'unknown';
+      await audit(tx, req.user.id, `easypay_rejected_${reason}`, p.id);
     });
     throw new AppError(
       422,
-      'EasyPay a refusé l’initialisation. Vérifiez les informations avant de réessayer.',
+      (Object.hasOwn(EASYPAY_REJECTIONS, result.reason) && EASYPAY_REJECTIONS[result.reason]) ||
+        'EasyPay a refusé l’initialisation sans motif reconnu. Contactez le restaurant pour vérifier la configuration marchande avant de réessayer.',
     );
   }
   const {
