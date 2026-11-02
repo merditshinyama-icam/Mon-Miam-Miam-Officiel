@@ -1,0 +1,37 @@
+name: Vérifications MMM-41
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  quality:
+    name: Syntaxe et tests disponibles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Vérifier la syntaxe des tests
+        run: |
+          mapfile -t files < <(find backend/test -type f -name '*.js' -print)
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "Aucun fichier de test JavaScript trouvé."
+            exit 1
+          fi
+          for file in "${files[@]}"; do
+            node --check "$file"
+          done
+      - name: Exécuter les tests métier lorsque le socle est intégré
+        run: |
+          if [ -f backend/src/app.js ]; then
+            if [ ! -f package.json ] || [ ! -f package-lock.json ]; then
+              echo "Le socle est présent, mais package.json ou package-lock.json manque."
+              exit 1
+            fi
+            npm ci
+            npm run check
+          else
+            echo "::notice title=Tests métier en attente::Le socle applicatif (backend/src/app.js) n'est pas encore dans la branche d'intégration. Seule la syntaxe des fichiers de test a été vérifiée."
+          fi
