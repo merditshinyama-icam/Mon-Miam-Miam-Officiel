@@ -65,6 +65,24 @@ export function managementRouter(db) {
     }
     return b;
   }
+  // A shared code must stay stable: repeated clicks cannot invalidate invitations.
+  router.post('/referral/generate', roles('student'), async (req, res) => {
+    const code = await db.transaction(async (tx) => {
+      const {
+        rows: [user],
+      } = await tx.query(
+        'SELECT referral_code FROM users WHERE id=$1 AND restaurant_id=$2 AND active=TRUE FOR UPDATE',
+        [req.user.id, req.restaurant.id],
+      );
+      requireCondition(user, 404, 'Compte introuvable.');
+      if (user.referral_code) return user.referral_code;
+      const value = `MIAM-${randomBytes(12).toString('hex').toUpperCase()}`;
+      await tx.query('UPDATE users SET referral_code=$1 WHERE id=$2', [value, req.user.id]);
+      await audit(tx, req.user.id, 'referral_code_generated', req.user.id);
+      return value;
+    });
+    res.json({ code });
+  });
   router.get('/loyalty', roles('student'), async (req, res) => {
     const { rows: lots } = await db.query(
       'SELECT source,earned,remaining,created_at,expires_at FROM point_lots WHERE user_id=$1 ORDER BY created_at DESC',
