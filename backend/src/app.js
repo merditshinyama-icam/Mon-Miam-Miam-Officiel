@@ -27,7 +27,8 @@ export function createApp(db, options = {}) {
     resendApiKey: process.env.RESEND_API_KEY,
     mailFrom: process.env.MAIL_FROM || 'merdi.tshinyama@2030.ulc-icam.com',
     mailReplyTo: process.env.MAIL_REPLY_TO || 'merdi.tshinyama@2030.ulc-icam.com',
-    mailTestRecipient: process.env.MAIL_TEST_RECIPIENT,
+    // Student demonstration: never broaden delivery when the variable is omitted.
+    mailTestRecipient: process.env.MAIL_TEST_RECIPIENT || 'merdi.tshinyama@2030.ulc-icam.com',
     dataDir: path.resolve(process.env.DATA_DIR || 'data'),
     ...options,
   };
