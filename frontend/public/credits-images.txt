@@ -1,0 +1,19 @@
+# Crédits des photographies de démonstration
+
+Photos téléchargées le 23 octobre 2026 sous la licence Pexels :
+https://www.pexels.com/legal-pages/license/
+Utilisation gratuite et modification autorisées sous les conditions de cette licence.
+Les auteurs ne cautionnent pas l’application. Les photos représentent des illustrations
+culinaires et un décor de restaurant ; elles ne sont pas des photos de notre établissement
+ni des recettes congolaises exactes. Les logos et avatars à initiales restent des éléments graphiques.
+
+| Fichier | Auteur | Page originale |
+| --- | --- | --- |
+| moambe.webp | rakhmat suwandi | https://www.pexels.com/photo/delicious-plate-of-rice-and-fried-chicken-meal-36982103/ |
+| poisson.webp | Masuma Rahaman | https://www.pexels.com/photo/grilled-whole-fish-with-herbs-and-lime-slice-37534683/ |
+| bissap.webp | Israyosoy S. | https://www.pexels.com/photo/refreshing-hibiscus-drink-in-mason-jar-34566505/ |
+| samossas.webp | Ars Visions | https://www.pexels.com/photo/samosa-28075291/ |
+| restaurant.webp | Matheus Bertelli | https://www.pexels.com/photo/interior-of-a-restaurant-17294748/ |
+
+Adaptations : recadrage à 1200 × 900, conversion WebP et compression.
+Les fichiers sont servis localement, sans chargement externe à chaque visite.
