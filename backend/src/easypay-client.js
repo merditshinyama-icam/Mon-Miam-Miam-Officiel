@@ -104,6 +104,55 @@ export function createEasyPayClient(config, transport = fetch) {
   }
   return {
     configured,
+    async initiatePortal({ reference, amount, name, returnUrl }) {
+      configured();
+      requireCondition(
+        typeof reference === 'string' && /^[A-Za-z0-9]{6,16}$/.test(reference),
+        400,
+        'Référence marchande invalide.',
+      );
+      const callback = new URL(returnUrl);
+      requireCondition(
+        ['https:', 'http:'].includes(callback.protocol) && !callback.username && !callback.password,
+        503,
+        'Adresse de retour du restaurant invalide.',
+      );
+      const back = (outcome) => {
+        const url = new URL(callback);
+        url.searchParams.set('easypay', outcome);
+        return url.href;
+      };
+      const result = await post(
+        'payment/initialization',
+        {
+          order_ref: reference,
+          currency: 'CDF',
+          amount,
+          customer_name: name,
+          description: `Commande Mon Miam Miam ${reference}`,
+          language: 'FR',
+          channels: [{ channel: 'MOBILE MONEY' }],
+          success_url: back('success'),
+          cancel_url: back('cancel'),
+          error_url: back('error'),
+        },
+        true,
+      );
+      if (result.code === 0 || result.code === '0') {
+        const diagnostic = safeEasyPayDiagnostic(result, [token, cid]);
+        console.warn('EASYPAY_PORTAL_INITIALIZATION_REJECTED', JSON.stringify(diagnostic));
+        const reason = rejectionReason(diagnostic.message);
+        return reason ? { rejected: true, reason } : { rejected: true };
+      }
+      requireCondition(
+        (result.code === 1 || result.code === '1') &&
+          typeof result.reference === 'string' &&
+          /^[a-zA-Z0-9_+=/.-]{1,250}$/.test(result.reference),
+        502,
+        'Réponse EasyPay incomplète. Ne relancez pas le paiement ; contactez le restaurant.',
+      );
+      return { reference: result.reference };
+    },
     async initiate({ reference, amount, phone, name }) {
       configured();
       requireCondition(

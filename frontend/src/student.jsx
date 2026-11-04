@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { api, money, date, labels, roleLabels } from './api';
 import { useApp } from './context';
 import { AnnouncementTeaser } from './engagement';
@@ -451,6 +451,8 @@ export function Payment() {
   const [refresh, setRefresh] = useState(0),
     [busy, setBusy] = useState(false),
     [error, setError] = useState('');
+  const [flow, setFlow] = useState('portal');
+  const [returnParams] = useSearchParams();
   const [phone, setPhone] = useState(() => (user?.phone || '').replace(/^\+243|^0/, ''));
   const { data, error: loadError } = useResource(() => api(`/orders/${id}`), [id, refresh], true);
   const sandbox = catalog?.paymentMode === 'easypay-sandbox';
@@ -471,14 +473,35 @@ export function Payment() {
   }
   async function initiate(e) {
     e.preventDefault();
-    const body = Object.fromEntries(new FormData(e.currentTarget));
-    body.phone = `+243${body.phone}`;
-    await run(() => api(`/orders/${id}/payments`, { method: 'POST', body }));
+    const body =
+      !demo && flow === 'portal'
+        ? { flow: 'portal' }
+        : Object.fromEntries(new FormData(e.currentTarget));
+    if (body.flow !== 'portal') body.phone = `+243${body.phone}`;
+    await run(async () => {
+      const result = await api(`/orders/${id}/payments`, { method: 'POST', body });
+      if (result.payment?.checkout_url) {
+        const url = new URL(result.payment.checkout_url);
+        if (
+          url.origin !== 'https://www.e-com-easypay.com' ||
+          !/^\/(v1|sandbox)\/payment\/initialization$/.test(url.pathname)
+        )
+          throw new Error('Adresse du portail EasyPay invalide.');
+        window.location.assign(url.href);
+      }
+    });
   }
   return (
     <>
       <PageTitle title="Paiement Mobile Money" />
       <Alert>{loadError || error}</Alert>
+      {returnParams.has('easypay') && (
+        <Alert type="info">
+          Vous êtes revenu du portail EasyPay. Le retour seul ne confirme pas le paiement : vérifiez
+          son statut ci-dessous. Si vous avez annulé ou rencontré une erreur, vérifiez aussi avant
+          de recommencer.
+        </Alert>
+      )}
       {!order ? (
         <p role="status">Chargement de la commande…</p>
       ) : (
@@ -517,7 +540,7 @@ export function Payment() {
                     ? 'Environnement de test EasyPay. Utilisez uniquement les numéros de test autorisés par EasyPay.'
                     : catalog?.paymentMode === 'disabled'
                       ? 'Le paiement est temporairement indisponible pour ce restaurant.'
-                      : 'Validez le paiement sur votre téléphone. Ne communiquez jamais votre code PIN dans ce site.'}
+                      : 'Le portail EasyPay propose le paiement Mobile Money. La validation finale se fait sur votre téléphone. Ne communiquez jamais votre code PIN dans ce site.'}
               </Alert>
               {payment ? (
                 <>
@@ -562,6 +585,11 @@ export function Payment() {
                     </div>
                   ) : (
                     <>
+                      {payment.checkout_url && (
+                        <a className="button outline full" href={payment.checkout_url}>
+                          Reprendre sur le portail EasyPay
+                        </a>
+                      )}
                       {payment.provider_state === 'uncertain' && (
                         <Alert>
                           La demande n’a pas reçu de réponse certaine. Contactez le restaurant avant
@@ -584,56 +612,79 @@ export function Payment() {
                 </>
               ) : (
                 <form onSubmit={initiate}>
-                  <label className="field">
-                    <span>Votre opérateur</span>
-                    <select name="operator">
-                      <option value="m-pesa">M-Pesa</option>
-                      <option value="airtel">Airtel Money</option>
-                      <option value="orange">Orange Money</option>
-                    </select>
-                  </label>
-                  <div className="field">
-                    <label htmlFor="payment-phone">Numéro Mobile Money</label>
-                    <span className="phone-input">
-                      <span className="phone-prefix" aria-hidden="true">
-                        +243
-                      </span>
-                      <input
-                        id="payment-phone"
-                        type="tel"
-                        inputMode="numeric"
-                        name="phone"
-                        value={phone}
-                        onChange={(event) =>
-                          setPhone(event.target.value.replace(/\D/g, '').slice(0, 9))
-                        }
-                        onPaste={(event) => {
-                          event.preventDefault();
-                          let value = event.clipboardData.getData('text').replace(/\D/g, '');
-                          if (value.length === 12 && value.startsWith('243'))
-                            value = value.slice(3);
-                          else if (value.length === 10 && value.startsWith('0'))
-                            value = value.slice(1);
-                          if (/^[1-9][0-9]{8}$/.test(value)) setPhone(value);
-                          else
-                            setError(
-                              'Saisissez les 9 chiffres du numéro après +243, sans le 0 initial.',
-                            );
-                        }}
-                        placeholder="9 chiffres"
-                        required
-                        maxLength={9}
-                        pattern="[1-9][0-9]{8}"
-                        aria-describedby="payment-phone-help"
-                        autoComplete="tel-national"
-                      />
-                    </span>
-                    <small id="payment-phone-help">
-                      RDC (+243) : saisissez les 9 chiffres suivants, sans le 0 initial.
-                    </small>
-                  </div>
+                  {!demo && (
+                    <label className="field">
+                      <span>Comment souhaitez-vous payer ?</span>
+                      <select value={flow} onChange={(event) => setFlow(event.target.value)}>
+                        <option value="portal">Sur le portail EasyPay</option>
+                        <option value="direct">Mobile Money directement sur ce site</option>
+                      </select>
+                    </label>
+                  )}
+                  {!demo && flow === 'portal' && (
+                    <p>
+                      Vous serez redirigé vers EasyPay pour choisir votre opérateur et saisir votre
+                      numéro. La commande restera en attente jusqu’à la confirmation vérifiée du
+                      fournisseur.
+                    </p>
+                  )}
+                  {(demo || flow === 'direct') && (
+                    <>
+                      <label className="field">
+                        <span>Votre opérateur</span>
+                        <select name="operator">
+                          <option value="m-pesa">M-Pesa</option>
+                          <option value="airtel">Airtel Money</option>
+                          <option value="orange">Orange Money</option>
+                        </select>
+                      </label>
+                      <div className="field">
+                        <label htmlFor="payment-phone">Numéro Mobile Money</label>
+                        <span className="phone-input">
+                          <span className="phone-prefix" aria-hidden="true">
+                            +243
+                          </span>
+                          <input
+                            id="payment-phone"
+                            type="tel"
+                            inputMode="numeric"
+                            name="phone"
+                            value={phone}
+                            onChange={(event) =>
+                              setPhone(event.target.value.replace(/\D/g, '').slice(0, 9))
+                            }
+                            onPaste={(event) => {
+                              event.preventDefault();
+                              let value = event.clipboardData.getData('text').replace(/\D/g, '');
+                              if (value.length === 12 && value.startsWith('243'))
+                                value = value.slice(3);
+                              else if (value.length === 10 && value.startsWith('0'))
+                                value = value.slice(1);
+                              if (/^[1-9][0-9]{8}$/.test(value)) setPhone(value);
+                              else
+                                setError(
+                                  'Saisissez les 9 chiffres du numéro après +243, sans le 0 initial.',
+                                );
+                            }}
+                            placeholder="9 chiffres"
+                            required
+                            maxLength={9}
+                            pattern="[1-9][0-9]{8}"
+                            aria-describedby="payment-phone-help"
+                            autoComplete="tel-national"
+                          />
+                        </span>
+                        <small id="payment-phone-help">
+                          RDC (+243) : saisissez les 9 chiffres suivants, sans le 0 initial.
+                        </small>
+                      </div>
+                    </>
+                  )}
                   {order.payment_status === 'failed' && (
-                    <Alert>Cette tentative a échoué. Vous pouvez réessayer.</Alert>
+                    <Alert>
+                      La tentative précédente a été refusée. Si vous avez reçu une demande sur votre
+                      téléphone, vérifiez auprès du restaurant avant de recommencer.
+                    </Alert>
                   )}
                   <BusyButton
                     busy={busy}
@@ -644,9 +695,11 @@ export function Payment() {
                   >
                     {demo
                       ? 'Démarrer la simulation'
-                      : sandbox
-                        ? 'Tester avec EasyPay'
-                        : 'Payer avec Mobile Money'}
+                      : flow === 'portal'
+                        ? 'Continuer sur le portail EasyPay'
+                        : sandbox
+                          ? 'Tester avec EasyPay'
+                          : 'Payer avec Mobile Money'}
                   </BusyButton>
                 </form>
               )}

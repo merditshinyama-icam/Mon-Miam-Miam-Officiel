@@ -1,5 +1,10 @@
 import { isEasyPay } from './easypay-client.js';
-import { initiateEasyPay, reconcileEasyPay, effectivePaymentMode } from './easypay.js';
+import {
+  initiateEasyPay,
+  reconcileEasyPay,
+  effectivePaymentMode,
+  publicPayment,
+} from './easypay.js';
 import { Router } from 'express';
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
@@ -25,13 +30,13 @@ export async function orderDetails(db, id) {
     [id],
   );
   const { rows: payments } = await db.query(
-    'SELECT id,status,mode,created_at,provider_state,checked_at FROM payments WHERE order_id=$1 ORDER BY created_at DESC',
+    'SELECT * FROM payments WHERE order_id=$1 ORDER BY created_at DESC',
     [id],
   );
   const {
     rows: [review],
   } = await db.query('SELECT rating,message FROM reviews WHERE order_id=$1', [id]);
-  return { ...order, items, payments, review: review || null };
+  return { ...order, items, payments: payments.map(publicPayment), review: review || null };
 }
 export function ordersRouter(db, config) {
   const router = Router();
@@ -227,9 +232,16 @@ export function ordersRouter(db, config) {
   });
   router.post('/:id/payments', roles('student'), async (req, res) => {
     const body = z
-      .object({ phone: phoneSchema, operator: z.enum(['m-pesa', 'airtel', 'orange']) })
-      .strict()
+      .union([
+        z.object({ flow: z.literal('portal') }).strict(),
+        z.object({ phone: phoneSchema, operator: z.enum(['m-pesa', 'airtel', 'orange']) }).strict(),
+      ])
       .parse(req.body);
+    requireCondition(
+      body.flow !== 'portal' || isEasyPay(config.paymentMode),
+      409,
+      'Le portail nécessite un mode EasyPay actif.',
+    );
     if (isEasyPay(config.paymentMode)) {
       const payment = await initiateEasyPay(db, config, req, body);
       return res.status(201).json({ payment });

@@ -12,6 +12,14 @@ export const publicPayment = (p) => ({
   created_at: p.created_at,
   provider_state: p.provider_state,
   checked_at: p.checked_at,
+  ...(p.operator === 'easypay-portal' &&
+  p.status === 'pending' &&
+  isEasyPay(p.mode) &&
+  /^[a-zA-Z0-9_+=/.-]{1,250}$/.test(p.provider_reference || '')
+    ? {
+        checkout_url: `https://www.e-com-easypay.com/${p.mode === 'easypay-live' ? 'v1' : 'sandbox'}/payment/initialization?reference=${encodeURIComponent(p.provider_reference)}`,
+      }
+    : {}),
 });
 export const effectivePaymentMode = (config, restaurantId) =>
   isEasyPay(config.paymentMode) && restaurantId !== config.easypayRestaurantId
@@ -51,8 +59,8 @@ export async function initiateEasyPay(db, config, req, body) {
         id,
         order.id,
         config.paymentMode,
-        body.phone,
-        body.operator,
+        body.phone || req.user.phone || '',
+        body.flow === 'portal' ? 'easypay-portal' : body.operator,
         randomBytes(8).toString('hex'),
         order.total,
       ],
@@ -64,12 +72,19 @@ export async function initiateEasyPay(db, config, req, body) {
   const p = attempt.payment;
   let result;
   try {
-    result = await config.easypay.initiate({
+    const details = {
       reference: p.provider_order_ref,
       amount: p.amount,
       phone: p.phone,
       name: req.user.name,
-    });
+    };
+    if (body.flow === 'portal') {
+      const base = req.restaurant.id === RESTAURANT ? '' : `/r/${req.restaurant.slug}`;
+      result = await config.easypay.initiatePortal({
+        ...details,
+        returnUrl: new URL(`${base}/payment/${p.order_id}`, config.origin).href,
+      });
+    } else result = await config.easypay.initiate(details);
   } catch (error) {
     await db.query(
       "UPDATE payments SET provider_state='uncertain' WHERE id=$1 AND provider_reference IS NULL",

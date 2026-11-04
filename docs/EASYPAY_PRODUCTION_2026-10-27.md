@@ -25,3 +25,8 @@ Cinq nouveaux tests isolés contrôlent les routes v1, le format du téléphone,
 Le déploiement et le mode réellement exposé sont à confirmer sur Render après publication. Aucun paiement réel n'est initié par cette vérification. Le propriétaire déclenche lui-même un essai et valide sur son téléphone ; la mise en production ne constitue pas une preuve d'acceptation des clés ou de réussite d'un paiement.
 
 Les boutons d'aperçu positif/négatif restent fictifs et n'acquittent jamais une commande réelle. Les variables privées, la base PostgreSQL et la configuration Resend sont conservées.
+
+
+## Complément du 4 novembre 2026
+
+Le parcours hébergé est ajouté en complément du Mobile Money direct. Voir [Paiement par le portail EasyPay](EASYPAY_PORTAIL_2026-11-04.md) pour les endpoints, les adaptations M3/M4 nécessaires au paiement, les 109 tests locaux et les limites des preuves. Une transaction INIT reste distincte d’un paiement confirmé.
