@@ -1,0 +1,66 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{lmodern,microtype,xcolor,enumitem,fancyhdr,xurl,hyperref}
+\usepackage[margin=2.3cm,headheight=15pt]{geometry}
+\definecolor{navy}{HTML}{163B4A}
+\hypersetup{colorlinks=true,urlcolor=navy,linkcolor=navy,pdftitle={M6 - Avenant EasyPay : portail et vérification},pdfauthor={E.Merdi Tshinyama}}
+\setlength{\parindent}{0pt}\setlength{\parskip}{6pt}
+\setlist{leftmargin=*,itemsep=3pt,topsep=4pt}
+\emergencystretch=3em\raggedbottom
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small ULC-Icam\quad X2\quad Groupe 1}
+\fancyhead[R]{\small Mon Miam Miam -- M6}
+\fancyfoot[L]{\footnotesize Développement Web -- 4 novembre 2026}
+\fancyfoot[R]{\thepage}
+\begin{document}
+{\small RÉPUBLIQUE DÉMOCRATIQUE DU CONGO\par}
+{\large\bfseries Université Loyola du Congo -- ULC-Icam\par}
+Faculté des sciences et des technologies\par
+\vspace{7mm}
+{\LARGE\bfseries\color{navy} Avenant au rapport du module M6\par}
+{\large Paiement hébergé EasyPay et portée des vérifications\par}
+\vspace{3mm}
+\textbf{Responsable :} E.Merdi Tshinyama\hfill\textbf{Date :} 4 novembre 2026
+
+\section{Motif et décision}
+Nous ajoutons le portail hébergé EasyPay comme parcours proposé par défaut, tout en conservant le paiement Mobile Money direct comme option. Le portail prend en charge le choix de l'opérateur et la saisie du numéro. Cette adaptation permet de comparer deux modes d'intégration officiels et d'isoler plus précisément l'étape où survient le refus.
+
+Le 4 novembre 2026, le journal de la version de référence déployée sur Render indique \texttt{code: 0}, \texttt{message: "Prefix not found."}. Le tableau marchand affiche la transaction \texttt{189881}, commande \texttt{6bb65c0381ced42e}, d'un montant de \textbf{11\,000 CDF}, en état \texttt{INIT}. L'URL de production et le numéro national de neuf chiffres concordent avec la documentation publique. Ces éléments orientent la recherche vers le routage du préfixe ou l'activation du marchand chez le fournisseur ; ils n'établissent pas à eux seuls sa cause interne.
+
+\section{Parcours technique livré}
+\begin{enumerate}
+\item Le navigateur demande le parcours hébergé avec \texttt{\{flow:"portal"\}}. Le serveur contrôle la session, le restaurant, le propriétaire de la commande et son montant.
+\item Le serveur appelle \texttt{POST /v1/payment/initialization} sur le domaine officiel EasyPay. Les identifiants \texttt{cid} et \texttt{token} restent exclusivement côté serveur.
+\item Le JSON contient la référence, le montant CDF, le nom, la description, la langue, le canal Mobile Money et les URLs de retour succès, annulation et erreur. Le montant et les URLs ne viennent jamais du navigateur.
+\item Après une réponse \texttt{code: 1} et une référence valide, le navigateur ouvre le portail officiel avec cette seule référence. Aucune clé marchande ne figure dans l'URL client.
+\item Une tentative existante en attente est reprise avec la même référence. Après un délai d'attente incertain, aucune nouvelle tentative automatique n'est créée.
+\item Au retour, la commande reste en attente. Seule la vérification serveur auprès d'EasyPay peut confirmer un paiement. L'IPN déclenche cette même vérification ; son contenu n'est pas accepté comme preuve autonome.
+\end{enumerate}
+
+\newpage
+\section{Portée des preuves}
+Nous distinguons trois niveaux de vérification :
+\begin{description}
+\item[Intégration applicative.] Les tests locaux vérifient les formats, les contrôles d'accès, la persistance de la référence, la reprise et les règles de confirmation.
+\item[Acceptation de l'initialisation.] Une réponse \texttt{code: 1}, une référence et l'ouverture du portail attestent les étapes effectivement atteintes. Un enregistrement \texttt{INIT} ne signifie pas que le paiement est accepté.
+\item[Paiement effectif.] Une réponse serveur cohérente \texttt{SUCCESS}, associée à la bonne commande et à la bonne référence, est requise pour acquitter la commande. Un retour navigateur « succès » ou un HTTP 200 ne suffit pas.
+\end{description}
+
+La présence d'un refus également dans le parcours hébergé constituerait un élément complémentaire pour le support. Nous ne présentons pas ce résultat comme acquis avant une recette réelle. La confirmation définitive d'une anomalie interne revient au fournisseur.
+
+\section{Vérifications et limites}
+L'assemblage local complet avec ce complément passe \textbf{109 tests}, puis la compilation. Les six nouveaux tests couvrent les contrats de production et sandbox, l'absence de secrets dans les retours, la reprise sans double initialisation, les contrôles des paramètres et de l'accès, le rejet d'une fausse confirmation IPN, l'annulation et le délai d'attente.
+
+Ces tests emploient un fournisseur simulé et ne constituent pas un débit réel. La recette doit enregistrer séparément la référence de commande, la réponse d'initialisation, la référence EasyPay, l'ouverture du portail, le message éventuel du fournisseur et le résultat de la vérification serveur. L'utilisateur réalise lui-même la validation du paiement. Les captures partagées ne doivent pas exposer de secrets ou de données de portefeuille.
+
+\section{Configuration et collaboration}
+Les variables privées Render existantes et l'IPN sont conservées. Aucune migration de base n'est nécessaire. Les comptes, commandes et réglages Resend restent inchangés.
+
+Les adaptations portent sur \path{backend/src/easypay-client.js}, \path{backend/src/easypay.js}, \path{backend/src/orders.js} et \path{frontend/src/student.jsx}. Le complément M6 touche ainsi les interfaces des lots M3 et M4 : leurs fonctionnalités doivent être conservées lors des fusions. Une ancienne copie V5 ne doit pas remplacer ces adaptations du portail sans comparaison.
+
+\textbf{IPN :} \url{https://mon-miam-miam-rdc.onrender.com/api/payments/easypay/ipn}
+
+\textbf{Référence officielle :} documentation EasyPay, sections initialisation, redirection, vérification et IPN, consultées le 4 novembre 2026 : \url{https://developper.e-com-easypay.com/}.
+\end{document}
