@@ -1,9 +1,51 @@
-# Mon Miam Miam — dépôt officiel du groupe
+# Mon Miam Miam — Groupe 1, ULC-Icam X2
 
-Socle initial d’intégration. Le code préparé avec Codex est fourni en sept paquets. Chaque membre le comprend, l’intègre, adapte utilement son périmètre et documente ses essais avant son propre commit. Son nom comme auteur Git ne transforme pas le code fourni en conception personnelle.
+Application de restauration étudiante adaptée à la RDC, avec prix en CDF. Les sept lots et les compléments V4/V5 sont assemblés : comptes et restaurants, interface responsive et thèmes, catalogue et commandes, réclamations et annonces, fidélité et parrainage, paiements EasyPay, administration et statistiques.
 
-Ordre des revues et fusions : M1 → M2 → M3 → M4 → M5 → M6 → M7, vers integration/complements-cahier. Une fois assemblée, cette branche doit réussir npm ci et npm run check, puis la recette humaine avant fusion dans main et changement de déploiement.
+## Démarrer en local
 
-Le dépôt de référence est andreanandu0925-bit/Mon_miam_miam, branche archive/version-assistee-2026-10-24, commit a2814e8. Render continue à utiliser cette référence pendant l’intégration. Ne pas recréer sa base ni publier ses variables privées.
+Prérequis : Node.js 22.12 ou supérieur et npm.
 
-Voir collaboration/PLAN_DES_FICHIERS.json pour le découpage et les tickets enregistrés. Les états Jira sont à vérifier avant de les changer ; les échéances prévues ne sont pas les dates à attribuer aux commits.
+```sh
+npm ci
+```
+
+Copier `.env.example` vers `.env`, puis exécuter :
+
+```sh
+npm run build
+npm start
+```
+
+Ouvrir http://localhost:3001. Sans DATABASE_URL, la base PostgreSQL embarquée est créée dans `data/postgres` et les migrations sont appliquées au démarrage. La création d’un restaurant depuis l’interface crée son administrateur. Les comptes de démonstration ne sont pas créés automatiquement : en développement uniquement, définir DEMO_PASSWORD dans .env puis lancer `npm run seed`. Les adresses sont student@demo.miam.test, employee@demo.miam.test, manager@demo.miam.test et admin@demo.miam.test ; le mot de passe est celui choisi dans DEMO_PASSWORD. Ne jamais publier .env ni les données locales.
+
+Pour travailler sur l’interface avec rechargement automatique : `npm run dev`.
+
+## Vérifications
+
+```sh
+npm run check
+```
+
+Cette commande exécute les tests puis compile le frontend. L’assemblage vérifié le 4 novembre 2026 a réussi 109 tests et la compilation locale. Les fichiers modifiés depuis l’archive d’intégration ont été relus depuis la branche de livraison GitHub. Les tests utilisent des bases isolées et des réponses de prestataires simulées ; ils ne prouvent pas un débit EasyPay réel. GitHub Actions exécute aussi npm ci et npm run check sur l’application complète. Au moment de la livraison, ses exécutions étaient en attente pendant l’incident Actions/Webhooks signalé par GitHub : https://www.githubstatus.com/incidents/xr3myzj7ms51.
+
+## Hébergement et services externes
+
+Le code et render.yaml sont prêts pour Render. Le service existant mon-miam-miam-rdc continue de déployer le dépôt de référence andreanandu0925-bit/Mon_miam_miam, branche archive/version-assistee-2026-10-24. La fusion de ce dépôt officiel ne change pas automatiquement sa source de déploiement. Pour basculer ultérieurement ce même service sur main, conserver sa base et ses variables privées ; ne pas recréer les ressources à partir du Blueprint.
+
+- Render : DATABASE_URL obligatoire en production ; conserver APP_ORIGIN ou RENDER_EXTERNAL_URL, TRUST_PROXY et les paramètres privés existants. Voir [Déploiement](docs/DEPLOIEMENT_RENDER.md).
+- EasyPay : portail hébergé par défaut, parcours Mobile Money direct conservé et confirmation uniquement côté serveur. Voir [Portail et recette](docs/EASYPAY_PORTAIL_2026-11-04.md) et [IPN](docs/EASYPAY_IPN.md). Les clés restent côté serveur. INIT et une page de retour ne confirment pas un paiement. La réussite réelle chez le prestataire reste à vérifier.
+- Resend : conserver RESEND_API_KEY, MAIL_FROM, MAIL_REPLY_TO et MAIL_TEST_RECIPIENT dans Render. La récupération de démonstration reste limitée à l’adresse autorisée de Merdi.
+
+## Organisation du code
+
+- backend/src : API, règles métier et services externes ; backend/sql : migrations ; backend/test : tests.
+- frontend/src : React ; frontend/public/assets : images locales et icônes, livrées avec le dépôt.
+- scripts : développement, récupération des comptes et outils opérateurs.
+- docs : [architecture](docs/ARCHITECTURE.md), [API](docs/API.md), [recette par lot](docs/LOTS_ET_RECETTE.md), [crédits des images](docs/CREDITS_IMAGES.md) et [cadre juridique](docs/CADRE_JURIDIQUE.md).
+
+## Historique de l’intégration
+
+Les commits des membres sont conservés. Les PR #8, #10 et #11 complètent l’intégration ; #13 assemble celle-ci sur une branche de livraison qui rétablit explicitement le socle retiré par #9. La PR #12 livre ensuite l’ensemble vers main sans réécriture d’historique. Les anciens échecs de branches incomplètes ne constituent pas le résultat des tests de la version assemblée.
+
+Le code a été préparé avec l’assistance de Codex puis intégré et revu par le groupe. Les dates Git reflètent les opérations réelles ; les échéances Jira restent des dates de planification.
