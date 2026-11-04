@@ -1,0 +1,38 @@
+{
+  "name": "mon-miam-miam",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "vite build --config frontend/vite.config.js",
+    "start": "node --env-file-if-exists=.env backend/src/index.js",
+    "test": "node --test backend/test/*.test.js",
+    "seed": "node --env-file-if-exists=.env backend/src/seed.js",
+    "check": "npm run test && npm run build",
+    "format": "prettier --write frontend/src backend/src backend/test scripts frontend/vite.config.js",
+    "admin:create": "node --env-file-if-exists=.env backend/src/create-admin.js"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.3.14",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "multer": "^2.0.2",
+    "pg": "^8.16.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.4",
+    "sharp": "^0.35.5",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.4",
+    "prettier": "^3.6.2",
+    "supertest": "^7.1.4",
+    "vite": "^7.1.10"
+  }
+}
