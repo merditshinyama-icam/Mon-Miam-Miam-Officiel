@@ -4,6 +4,7 @@ import { api, money, date, labels, roleLabels } from './api';
 import { useApp } from './context';
 import { AnnouncementTeaser } from './engagement';
 import { projectTeam } from './team';
+import { PaymentSimulationActions } from './payment-simulation';
 import {
   Alert,
   Avatar,
@@ -446,6 +447,7 @@ export function Cart() {
   );
 }
 export function Payment() {
+  const navigate = useNavigate();
   const { id } = useParams(),
     { user, catalog } = useApp();
   const [refresh, setRefresh] = useState(0),
@@ -459,6 +461,15 @@ export function Payment() {
   const demo = catalog?.paymentMode === 'demo';
   const order = data?.order,
     payment = order?.payments.find((p) => p.status === 'pending');
+  async function simulateDemo(outcome) {
+    await run(async () => {
+      await api(`/orders/${id}/payments/${payment.id}/simulate`, {
+        method: 'POST',
+        body: { outcome },
+      });
+      navigate(`/payment/${id}/simulation`);
+    });
+  }
   async function run(action) {
     setBusy(true);
     setError('');
@@ -557,28 +568,14 @@ export function Payment() {
                       <BusyButton
                         className="button full"
                         busy={busy}
-                        onClick={() =>
-                          run(() =>
-                            api(`/orders/${id}/payments/${payment.id}/simulate`, {
-                              method: 'POST',
-                              body: { outcome: 'paid' },
-                            }),
-                          )
-                        }
+                        onClick={() => simulateDemo('paid')}
                       >
                         Simuler une réussite
                       </BusyButton>
                       <BusyButton
                         className="button outline full"
                         busy={busy}
-                        onClick={() =>
-                          run(() =>
-                            api(`/orders/${id}/payments/${payment.id}/simulate`, {
-                              method: 'POST',
-                              body: { outcome: 'failed' },
-                            }),
-                          )
-                        }
+                        onClick={() => simulateDemo('failed')}
                       >
                         Simuler un échec
                       </BusyButton>
@@ -714,35 +711,12 @@ export function Payment() {
           )}
         </div>
       )}
-      {!demo && catalog?.demoPreview && <PaymentResponsePreview />}
+      {!demo &&
+        catalog?.demoPreview &&
+        order &&
+        order.payment_status !== 'paid' &&
+        order.status !== 'cancelled' && <PaymentSimulationActions />}
     </>
-  );
-}
-function PaymentResponsePreview() {
-  const [result, setResult] = useState('');
-  return (
-    <section className="panel section-space">
-      <h2>Démonstration des réponses</h2>
-      <p>
-        Ces boutons montrent un résultat fictif pour la présentation. Ils ne modifient ni la
-        commande, ni son paiement EasyPay.
-      </p>
-      <div className="row">
-        <button className="button" onClick={() => setResult('paid')}>
-          Simuler une réponse positive
-        </button>
-        <button className="button outline" onClick={() => setResult('failed')}>
-          Simuler une réponse négative
-        </button>
-      </div>
-      {result && (
-        <Alert type={result === 'paid' ? 'success' : 'error'}>
-          {result === 'paid'
-            ? 'APERÇU SIMULÉ : paiement accepté. La commande réelle conserve son statut.'
-            : 'APERÇU SIMULÉ : paiement refusé. Aucun paiement n’est annulé chez EasyPay.'}
-        </Alert>
-      )}
-    </section>
   );
 }
 export function Orders() {
@@ -992,11 +966,13 @@ export function Loyalty() {
                         <td>
                           {l.source.startsWith('referral:')
                             ? 'Parrainage'
-                            : l.source.startsWith('demo:')
-                              ? 'Crédit de démonstration'
-                              : l.source.startsWith('adjustment:')
-                                ? 'Correction de la direction'
-                                : 'Commande honorée'}
+                            : l.source.startsWith('demo:payment:')
+                              ? 'Paiement simulé'
+                              : l.source.startsWith('demo:')
+                                ? 'Crédit de démonstration'
+                                : l.source.startsWith('adjustment:')
+                                  ? 'Correction de la direction'
+                                  : 'Commande honorée'}
                         </td>
                         <td>+{l.earned}</td>
                         <td>{new Date(l.expires_at) > new Date() ? l.remaining : 0}</td>

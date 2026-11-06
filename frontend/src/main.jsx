@@ -27,6 +27,7 @@ import { Auth } from './auth';
 import { Kitchen, ManageMenu, Stats, Staff, Settings } from './restaurant';
 import { NewRestaurant } from './onboarding';
 import { Restaurants } from './restaurants';
+import { PaymentSimulationResult } from './payment-simulation';
 import { Announcements, PointAdjustments } from './engagement';
 import './styles.css';
 
@@ -167,6 +168,10 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/events" element={<Announcements />} />
           <Route path="/payment/:id" element={protect(<Payment />, ['student'])} />
+          <Route
+            path="/payment/:id/simulation"
+            element={protect(<PaymentSimulationResult />, ['student'])}
+          />
           <Route path="/orders" element={protect(<Orders />, ['student'])} />
           <Route path="/loyalty" element={protect(<Loyalty />, ['student'])} />
           <Route path="/ranking" element={protect(<Ranking />)} />
