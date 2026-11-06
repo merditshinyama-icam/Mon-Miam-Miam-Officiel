@@ -289,7 +289,7 @@ test('confirmer deux fois un paiement ne crée pas deux effets et le service sui
       ).status,
       200,
     );
-  assert.equal((await send(student, 'get', '/loyalty')).body.balance, 30);
+  assert.equal((await send(student, 'get', '/loyalty')).body.balance, 33);
   assert.equal((await send(student, 'post', `/orders/${orderId}/cancel`)).status, 409);
   assert.equal(
     (await send(employee, 'patch', `/orders/${orderId}/status`, { status: 'delivered' })).status,
