@@ -1,0 +1,128 @@
+.simulation-actions {
+  padding: clamp(20px, 4vw, 34px);
+}
+.simulation-actions p {
+  max-width: 65ch;
+  color: var(--muted);
+}
+.simulation-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.simulation-result {
+  max-width: 820px;
+  margin: 0 auto 32px;
+  overflow: hidden;
+}
+.simulation-result-header {
+  text-align: center;
+  padding: 38px 24px 26px;
+  background: linear-gradient(160deg, var(--soft), var(--surface));
+}
+.simulation-result-header h2 {
+  font-size: clamp(25px, 4vw, 36px);
+  line-height: 1.2;
+  margin: 18px 0 12px;
+}
+.simulation-result-header p {
+  max-width: 55ch;
+  margin: 0 auto;
+  color: var(--muted);
+}
+.simulation-symbol {
+  margin: 24px auto 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--success-bg);
+  color: var(--green);
+  border: 1px solid var(--line);
+}
+.simulation-failure .simulation-symbol {
+  background: var(--error-bg);
+  color: var(--error);
+}
+.simulation-metrics {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-block: 1px solid var(--line);
+}
+.simulation-metrics > div {
+  padding: 23px 16px;
+  text-align: center;
+  min-width: 0;
+}
+.simulation-metrics > div + div {
+  border-left: 1px solid var(--line);
+}
+.simulation-metrics dt {
+  font-size: 12px;
+  color: var(--muted);
+}
+.simulation-metrics dd {
+  margin: 8px 0 0;
+  font-size: clamp(18px, 3vw, 25px);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.simulation-metrics small {
+  font-size: 12px;
+  font-weight: 400;
+}
+.simulation-receipt {
+  padding: 22px 28px;
+}
+.simulation-receipt h3 {
+  margin: 0;
+}
+.simulation-receipt ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+.simulation-receipt li {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.simulation-receipt li strong {
+  white-space: nowrap;
+}
+.simulation-note {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.simulation-result-footer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 0 24px 30px;
+}
+@media (max-width: 540px) {
+  .simulation-metrics {
+    grid-template-columns: 1fr;
+  }
+  .simulation-metrics > div {
+    padding: 15px;
+  }
+  .simulation-metrics > div + div {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+  .simulation-result-footer > *,
+  .simulation-buttons > * {
+    width: 100%;
+    text-align: center;
+  }
+  .simulation-receipt {
+    padding: 20px;
+  }
+}

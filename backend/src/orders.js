@@ -1,4 +1,5 @@
 import { isEasyPay } from './easypay-client.js';
+import { recordPaymentSimulation } from './payment-simulations.js';
 import {
   initiateEasyPay,
   reconcileEasyPay,
@@ -343,6 +344,7 @@ export function ordersRouter(db, config) {
         order.id,
       ]);
       await audit(tx, req.user.id, `demo_payment_${outcome}`, payment.id);
+      await recordPaymentSimulation(tx, order, outcome, req.user.id);
     });
     res.json({ order: await orderDetails(db, req.params.id) });
   });

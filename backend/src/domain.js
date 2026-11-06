@@ -103,8 +103,18 @@ export function nextStatuses(order) {
 export async function rewardFulfilledOrder(db, order) {
   requireCondition(order.payment_status === 'paid', 409, 'Le paiement doit être confirmé.');
   const rules = await settings(db, order.restaurant_id);
-  const earned = Math.floor((order.subtotal - order.discount) / rules.earnEvery);
-  await addPoints(db, order.user_id, earned, `order:${order.id}`, rules.pointValidityDays);
+  const {
+    rows: [simulatedCredit],
+  } = await db.query('SELECT earned FROM point_lots WHERE user_id=$1 AND source=$2', [
+    order.user_id,
+    `demo:payment:${order.id}`,
+  ]);
+  const earned =
+    simulatedCredit?.earned ?? Math.floor((order.subtotal - order.discount) / rules.earnEvery);
+  // Une commande effectivement honorée après sa démonstration n'accorde pas
+  // une deuxième fois les points déjà crédités pour cette même commande.
+  if (!simulatedCredit)
+    await addPoints(db, order.user_id, earned, `order:${order.id}`, rules.pointValidityDays);
   await db.query('UPDATE orders SET points_earned=$1 WHERE id=$2', [earned, order.id]);
   const {
     rows: [user],
