@@ -8,6 +8,7 @@ import path from 'node:path';
 import { existsSync } from 'node:fs';
 import { authRouter, loadUser } from './auth.js';
 import { ordersRouter } from './orders.js';
+import { paymentSimulationsRouter } from './payment-simulations.js';
 import { managementRouter } from './management.js';
 import { engagementRouter } from './engagement.js';
 import { createResetMailer } from './mail.js';
@@ -113,6 +114,7 @@ export function createApp(db, options = {}) {
   app.use('/api', restaurantsRouter(db, config));
   app.use('/api/auth', authRouter(db, config));
   app.use('/api/orders', ordersRouter(db, config));
+  app.use('/api/orders', paymentSimulationsRouter(db, config));
   app.use('/api', managementRouter(db));
   app.use('/api', engagementRouter(db));
   app.use('/api', (_req, _res, next) => next(new AppError(404, 'Ressource introuvable.')));
