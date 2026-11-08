@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { roles } from './auth.js';
+import { randomUUID } from 'node:crypto';
+import { settleOrder } from './settlements.js';
 import { addPoints, audit, balance, requireCondition, settings } from './domain.js';
 
 // Le propriétaire de la commande est verrouillé par la route appelante.
@@ -9,9 +11,9 @@ export async function recordPaymentSimulation(db, order, outcome, actor) {
   const {
     rows: [previous],
   } = await db.query('SELECT * FROM payment_simulations WHERE order_id=$1 FOR UPDATE', [order.id]);
-  if (previous?.outcome === outcome) return previous;
+  if (previous?.outcome === outcome && outcome !== 'paid') return previous;
   requireCondition(
-    previous?.outcome !== 'paid',
+    previous?.outcome !== 'paid' || outcome === 'paid',
     409,
     'La simulation réussie est déjà enregistrée.',
   );
@@ -20,6 +22,25 @@ export async function recordPaymentSimulation(db, order, outcome, actor) {
     outcome === 'paid' ? Math.floor((order.subtotal - order.discount) / rules.earnEvery) : 0;
   if (earned)
     await addPoints(db, order.user_id, earned, `demo:payment:${order.id}`, rules.pointValidityDays);
+  if (outcome === 'paid') {
+    const {
+      rows: [existing],
+    } = await db.query(
+      "SELECT id FROM payments WHERE order_id=$1 AND mode='demo' AND status='paid'",
+      [order.id],
+    );
+    if (!existing)
+      await db.query(
+        "INSERT INTO payments(id,order_id,mode,phone,operator,status,amount,currency) VALUES($1,$2,'demo','','simulation','paid',$3,'CDF')",
+        [randomUUID(), order.id, order.total],
+      );
+    await settleOrder(db, order.id, 'simulation', true, actor);
+    await db.query('UPDATE orders SET points_earned=$1 WHERE id=$2', [
+      previous?.points_earned ?? earned,
+      order.id,
+    ]);
+  }
+  if (previous?.outcome === 'paid') return previous;
   const {
     rows: [simulation],
   } = await db.query(
@@ -57,7 +78,14 @@ export function paymentSimulationsRouter(db, config) {
     );
     res.json({
       simulation: simulation || null,
-      order: { id: order.id, total: order.total, payment_status: order.payment_status, items },
+      order: {
+        id: order.id,
+        total: order.total,
+        payment_status: order.payment_status,
+        status: order.status,
+        is_simulated: order.is_simulated,
+        items,
+      },
       balance: await balance(db, req.user.id),
     });
   });
@@ -70,9 +98,13 @@ export function paymentSimulationsRouter(db, config) {
     const simulation = await db.transaction(async (tx) => {
       const order = await ownedOrder(tx, req, true);
       requireCondition(order.status !== 'cancelled', 409, 'Cette commande est annulée.');
-      requireCondition(order.payment_status !== 'paid', 409, 'Cette commande est déjà payée.');
-      // Ne modifie ni orders.payment_status, ni les transactions EasyPay,
-      // et ne contacte jamais le fournisseur pour une démonstration.
+      requireCondition(
+        order.payment_status !== 'paid' || (order.is_simulated && outcome === 'paid'),
+        409,
+        'Cette commande est déjà payée.',
+      );
+      // La commande suit le parcours normal ; les transactions réelles
+      // EasyPay sont conservées et aucun appel fournisseur n'est effectué.
       return recordPaymentSimulation(tx, order, outcome, req.user.id);
     });
     res.json({ simulation });

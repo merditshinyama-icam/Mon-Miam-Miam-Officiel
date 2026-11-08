@@ -1,5 +1,7 @@
 import { isEasyPay } from './easypay-client.js';
 import { recordPaymentSimulation } from './payment-simulations.js';
+import { requestCash } from './cash.js';
+import { settleOrder } from './settlements.js';
 import {
   initiateEasyPay,
   reconcileEasyPay,
@@ -24,7 +26,10 @@ import {
 export async function orderDetails(db, id) {
   const {
     rows: [order],
-  } = await db.query('SELECT * FROM orders WHERE id=$1', [id]);
+  } = await db.query(
+    'SELECT o.*,u.name AS customer_name FROM orders o JOIN users u ON u.id=o.user_id WHERE o.id=$1',
+    [id],
+  );
   requireCondition(order, 404, 'Commande introuvable.');
   const { rows: items } = await db.query(
     'SELECT * FROM order_items WHERE order_id=$1 ORDER BY name',
@@ -77,6 +82,7 @@ export function ordersRouter(db, config) {
         arrivalAt: z.iso.datetime({ offset: true }).optional(),
         address: z.string().trim().max(400).optional(),
         points: z.number().int().min(0).max(100000).default(0),
+        paymentMethod: z.enum(['easypay', 'cash', 'simulation']).optional(),
       })
       .strict()
       .parse(req.body);
@@ -125,7 +131,11 @@ export function ordersRouter(db, config) {
       const rules = await settings(tx, req.restaurant.id);
       const totals = calculateTotals(items, body.service, body.points, rules);
       requireCondition(
-        totals.total === 0 || effectivePaymentMode(config, req.restaurant.id) !== 'disabled',
+        totals.total === 0 ||
+          body.paymentMethod === 'cash' ||
+          (body.paymentMethod === 'simulation' &&
+            (config.demoPreview || (config.paymentMode === 'demo' && !config.production))) ||
+          effectivePaymentMode(config, req.restaurant.id) !== 'disabled',
         503,
         'Le paiement est temporairement indisponible. Votre commande n’a pas été créée et vos points sont conservés.',
       );
@@ -156,6 +166,24 @@ export function ordersRouter(db, config) {
           [id, item.id, item.name, item.price, item.quantity],
         );
       await reservePoints(tx, req.user.id, id, body.points);
+      if (body.paymentMethod === 'simulation') {
+        requireCondition(
+          config.demoPreview || (config.paymentMode === 'demo' && !config.production),
+          403,
+          'Simulation indisponible.',
+        );
+        await tx.query(
+          "UPDATE orders SET payment_method='simulation',is_simulated=TRUE WHERE id=$1",
+          [id],
+        );
+      }
+      if (totals.total === 0) await settleOrder(tx, id, 'points', false, req.user.id);
+      else if (body.paymentMethod === 'cash') {
+        const {
+          rows: [cashOrder],
+        } = await tx.query('SELECT * FROM orders WHERE id=$1', [id]);
+        await requestCash(tx, cashOrder, req.user.id);
+      }
       await audit(tx, req.user.id, 'order_created', id);
       return orderDetails(tx, id);
     });
