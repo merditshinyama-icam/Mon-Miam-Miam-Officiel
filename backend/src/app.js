@@ -9,6 +9,8 @@ import { existsSync } from 'node:fs';
 import { authRouter, loadUser } from './auth.js';
 import { ordersRouter } from './orders.js';
 import { paymentSimulationsRouter } from './payment-simulations.js';
+import { cashRouter } from './cash.js';
+import { decisionRouter } from './decision.js';
 import { managementRouter } from './management.js';
 import { engagementRouter } from './engagement.js';
 import { createResetMailer } from './mail.js';
@@ -100,6 +102,7 @@ export function createApp(db, options = {}) {
       restaurant: publicRestaurant(req.restaurant),
       featuredDishId: req.restaurant.featured_dish_id,
       demoPreview: config.demoPreview,
+      cashEnabled: true,
       emailRecoveryMode: config.mailer
         ? config.mailTestRecipient
           ? 'test'
@@ -115,7 +118,9 @@ export function createApp(db, options = {}) {
   app.use('/api/auth', authRouter(db, config));
   app.use('/api/orders', ordersRouter(db, config));
   app.use('/api/orders', paymentSimulationsRouter(db, config));
+  app.use('/api/orders', cashRouter(db));
   app.use('/api', managementRouter(db));
+  app.use('/api', decisionRouter(db));
   app.use('/api', engagementRouter(db));
   app.use('/api', (_req, _res, next) => next(new AppError(404, 'Ressource introuvable.')));
   const dist = path.resolve('frontend/dist');

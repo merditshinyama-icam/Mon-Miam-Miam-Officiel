@@ -28,6 +28,7 @@ import { Kitchen, ManageMenu, Stats, Staff, Settings } from './restaurant';
 import { NewRestaurant } from './onboarding';
 import { Restaurants } from './restaurants';
 import { PaymentSimulationResult } from './payment-simulation';
+import { Invoice } from './invoice';
 import { Announcements, PointAdjustments } from './engagement';
 import './styles.css';
 
@@ -173,6 +174,7 @@ function App() {
             element={protect(<PaymentSimulationResult />, ['student'])}
           />
           <Route path="/orders" element={protect(<Orders />, ['student'])} />
+          <Route path="/invoice/:id" element={protect(<Invoice />)} />
           <Route path="/loyalty" element={protect(<Loyalty />, ['student'])} />
           <Route path="/ranking" element={protect(<Ranking />)} />
           <Route path="/profile" element={protect(<Profile />)} />

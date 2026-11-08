@@ -26,8 +26,9 @@ export function PaymentSimulationActions() {
       <span className="pill">ESPACE DE DÉMONSTRATION</span>
       <h2>Tester le résultat d’un paiement</h2>
       <p>
-        Aucun argent n’est débité et la transaction EasyPay reste inchangée. Une réussite ajoute les
-        points de cette commande à votre fidélité, une seule fois.
+        Aucun argent n’est débité et la transaction EasyPay reste inchangée. Une réussite confirme
+        votre commande de démonstration, ajoute ses points une seule fois et alimente les
+        statistiques de simulation.
       </p>
       <Alert>{error}</Alert>
       <div className="simulation-buttons">
@@ -139,13 +140,23 @@ export function PaymentSimulationResult() {
             ))}
           </ul>
           <p className="simulation-note">
-            Ce résultat n’est pas une preuve d’encaissement. Le paiement EasyPay et la commande
-            réelle conservent leur statut.{' '}
+            Ce résultat n’est pas une preuve d’encaissement EasyPay. Votre commande de démonstration
+            est confirmée en cas de réussite et peut être préparée puis servie.{' '}
             {success && 'Actualiser la page ne crédite pas de points supplémentaires.'}
           </p>
         </div>
         <Alert>{actionError}</Alert>
         <div className="simulation-result-footer">
+          {success && (
+            <Link className="button" to="/orders">
+              Suivre ma commande
+            </Link>
+          )}
+          {success && (
+            <Link className="button outline" to={`/invoice/${id}`}>
+              Ma facture de démonstration
+            </Link>
+          )}
           {success ? (
             <Link className="button" to="/loyalty">
               <Icon name="gift" />

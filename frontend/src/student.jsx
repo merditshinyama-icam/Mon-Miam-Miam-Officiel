@@ -5,6 +5,7 @@ import { useApp } from './context';
 import { AnnouncementTeaser } from './engagement';
 import { projectTeam } from './team';
 import { PaymentSimulationActions } from './payment-simulation';
+import { CashChoice } from './cash-payment';
 import {
   Alert,
   Avatar,
@@ -222,6 +223,7 @@ export function Cart() {
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
   const key = useRef({ signature: '', value: '' });
+  const [paymentMethod, setPaymentMethod] = useState('');
   const { data: loyalty } = useResource(
     () => (user?.role === 'student' ? api('/loyalty') : Promise.resolve(null)),
     [user?.id],
@@ -238,7 +240,9 @@ export function Cart() {
     discount = (points / rules.redeemPoints) * rules.redeemValue,
     fee = service === 'delivery' ? rules.deliveryFee : 0;
   const total = Math.max(0, subtotal - discount) + fee;
-  const paymentUnavailable = catalog.paymentMode === 'disabled' && total > 0;
+  const chosenPayment = paymentMethod || (catalog.paymentMode === 'disabled' ? 'cash' : 'easypay');
+  const paymentUnavailable =
+    chosenPayment === 'easypay' && catalog.paymentMode === 'disabled' && total > 0;
   const maxLots = Math.min(
     Math.floor((loyalty?.balance || 0) / rules.redeemPoints),
     Math.floor(subtotal / rules.redeemValue),
@@ -261,6 +265,7 @@ export function Cart() {
         items: items.map((item) => ({ dishId: item.id, quantity: item.quantity })),
         service,
         points,
+        paymentMethod: chosenPayment,
       };
       if (service === 'onsite') {
         if (!values.arrivalAt) throw new Error('Indiquez votre heure d’arrivée.');
@@ -335,6 +340,18 @@ export function Cart() {
             <Link className="text-link" to="/">
               Ajouter une autre envie <Icon name="plus" size={16} />
             </Link>
+            <label className="field">
+              <span>Moyen de paiement</span>
+              <select value={chosenPayment} onChange={(e) => setPaymentMethod(e.target.value)}>
+                <option value="easypay" disabled={catalog.paymentMode === 'disabled'}>
+                  EasyPay · Mobile Money
+                </option>
+                <option value="cash">Espèces · validation par le personnel</option>
+                {(catalog.demoPreview || catalog.paymentMode === 'demo') && (
+                  <option value="simulation">Simulation EasyPay · démonstration intégrale</option>
+                )}
+              </select>
+            </label>
             <hr />
             <h2>On vous sert comment ?</h2>
             <div className="service-options">
@@ -504,7 +521,7 @@ export function Payment() {
   }
   return (
     <>
-      <PageTitle title="Paiement Mobile Money" />
+      <PageTitle title="Paiement de votre commande" />
       <Alert>{loadError || error}</Alert>
       {returnParams.has('easypay') && (
         <Alert type="info">
@@ -528,11 +545,17 @@ export function Payment() {
               </div>
               <h2>Votre commande est confirmée.</h2>
               <Alert type="success">
-                {demo
-                  ? 'Paiement simulé confirmé. Aucun argent n’a été débité.'
-                  : sandbox
-                    ? 'Paiement de test EasyPay confirmé.'
-                    : 'Paiement confirmé par EasyPay.'}
+                {order.is_simulated
+                  ? 'Paiement simulé confirmé. Votre commande suit le parcours de démonstration.'
+                  : order.payment_method === 'cash'
+                    ? 'Paiement en espèces reçu et validé par le personnel.'
+                    : order.payment_method === 'points'
+                      ? 'Commande réglée avec vos points de fidélité.'
+                      : demo
+                        ? 'Paiement simulé confirmé. Aucun argent n’a été débité.'
+                        : sandbox
+                          ? 'Paiement de test EasyPay confirmé.'
+                          : 'Paiement confirmé par EasyPay.'}
               </Alert>
               <Link className="button full" to="/orders">
                 Suivre ma commande
@@ -545,15 +568,32 @@ export function Payment() {
           ) : (
             <>
               <Alert type="info">
-                {demo
-                  ? 'Démonstration : aucun débit réel. Vous choisissez le résultat de la simulation.'
-                  : sandbox
-                    ? 'Environnement de test EasyPay. Utilisez uniquement les numéros de test autorisés par EasyPay.'
-                    : catalog?.paymentMode === 'disabled'
-                      ? 'Le paiement est temporairement indisponible pour ce restaurant.'
-                      : 'Le portail EasyPay propose le paiement Mobile Money. La validation finale se fait sur votre téléphone. Ne communiquez jamais votre code PIN dans ce site.'}
+                {payment?.mode === 'cash'
+                  ? 'Paiement en espèces : la validation est effectuée par le personnel après réception de la somme.'
+                  : order.payment_method === 'simulation'
+                    ? 'Parcours intégral de démonstration : choisissez un résultat, puis suivez la commande.'
+                    : demo
+                      ? 'Démonstration : aucun débit réel. Vous choisissez le résultat de la simulation.'
+                      : sandbox
+                        ? 'Environnement de test EasyPay. Utilisez uniquement les numéros de test autorisés par EasyPay.'
+                        : catalog?.paymentMode === 'disabled'
+                          ? 'Le Mobile Money est indisponible pour ce restaurant. Vous pouvez choisir les espèces ci-dessous.'
+                          : 'Le portail EasyPay propose le paiement Mobile Money. La validation finale se fait sur votre téléphone. Ne communiquez jamais votre code PIN dans ce site.'}
               </Alert>
-              {payment ? (
+              {order.payment_method === 'simulation' ? (
+                <PaymentSimulationActions />
+              ) : payment?.mode === 'cash' ? (
+                <div className="cash-waiting">
+                  <h3>Espèces attendues · {money(order.total)}</h3>
+                  <p>
+                    Présentez votre numéro de commande au personnel. La préparation commencera après
+                    la validation de la somme reçue.
+                  </p>
+                  <p className="muted">
+                    Cette page s’actualise automatiquement après la validation.
+                  </p>
+                </div>
+              ) : payment ? (
                 <>
                   <div className="success-circle pending">
                     <Icon name="clock" size={38} />
@@ -702,7 +742,7 @@ export function Payment() {
               )}
               <button
                 className="text-button"
-                disabled={busy || (payment && !demo)}
+                disabled={busy || (payment && !demo && payment.mode !== 'cash')}
                 onClick={() => run(() => api(`/orders/${id}/cancel`, { method: 'POST' }))}
               >
                 Annuler cette commande non payée
@@ -711,9 +751,11 @@ export function Payment() {
           )}
         </div>
       )}
+      {order && <CashChoice order={order} onRequested={() => setRefresh((n) => n + 1)} />}
       {!demo &&
         catalog?.demoPreview &&
         order &&
+        order.payment_method !== 'simulation' &&
         order.payment_status !== 'paid' &&
         order.status !== 'cancelled' && <PaymentSimulationActions />}
     </>
@@ -798,6 +840,12 @@ export function Orders() {
                   Payer ma commande
                 </Link>
               )}
+              {order.is_simulated && <p className="pill">Simulation · aucun encaissement réel</p>}
+              {order.payment_status === 'paid' && (
+                <Link className="button outline full" to={`/invoice/${order.id}`}>
+                  Voir ma facture{order.is_simulated ? ' de démonstration' : ''}
+                </Link>
+              )}
               {['served', 'delivered'].includes(order.status) && (
                 <>
                   <p className="earned">
@@ -847,6 +895,7 @@ export function Orders() {
   );
 }
 export function Loyalty() {
+  const { catalog } = useApp();
   const [refresh, setRefresh] = useState(0);
   const { data, error } = useResource(() => api('/loyalty'), [refresh]);
   const [generating, setGenerating] = useState(false);
@@ -874,6 +923,12 @@ export function Loyalty() {
                 {data.rules.redeemPoints} points = {money(data.rules.redeemValue)} de réduction.
                 <br />1 point par {money(data.rules.earnEvery)} d’articles réglés et servis.
               </p>
+              {(catalog?.demoPreview || catalog?.paymentMode === 'demo') && (
+                <p className="muted">
+                  En démonstration, une simulation réussie crédite aussi les points immédiatement,
+                  sans second gain au service de la même commande.
+                </p>
+              )}
               <Link className="button secondary" to="/">
                 Préparer ma prochaine pause <Icon name="arrow" />
               </Link>

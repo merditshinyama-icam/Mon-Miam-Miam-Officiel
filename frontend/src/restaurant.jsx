@@ -5,6 +5,8 @@ import { RestaurantBranding } from './onboarding';
 import { useApp } from './context';
 import { Alert, BusyButton, Empty, Field, Icon, Modal, PageTitle, useResource } from './components';
 import { Period } from './student';
+import { CashValidation } from './cash-payment';
+import { DecisionDashboard } from './decision-dashboard';
 
 const nextFor = (order) =>
   ({
@@ -28,7 +30,10 @@ export function Kitchen() {
         filter === 'all' ||
         (filter === 'active' &&
           ['confirmed', 'preparing', 'ready', 'delivering'].includes(o.status)) ||
-        (filter === 'pending' && o.status === 'awaiting_payment'),
+        (filter === 'pending' && o.status === 'awaiting_payment') ||
+        (filter === 'cash' &&
+          o.status === 'awaiting_payment' &&
+          o.payments.some((p) => p.mode === 'cash' && p.status === 'pending')),
     ) || [];
   async function advance(order) {
     setBusy(order.id);
@@ -54,6 +59,10 @@ export function Kitchen() {
         {[
           ['active', 'À préparer / servir'],
           ['pending', 'Paiement attendu'],
+          [
+            'cash',
+            `Espèces à valider (${data?.orders.filter((o) => o.status === 'awaiting_payment' && o.payments.some((p) => p.mode === 'cash' && p.status === 'pending')).length || 0})`,
+          ],
           ['all', 'Toutes les commandes'],
         ].map(([v, label]) => (
           <button
@@ -81,6 +90,10 @@ export function Kitchen() {
                 <span className={`status ${order.status}`}>{labels[order.status]}</span>
               </div>
               <p className="muted">Reçue le {date(order.created_at)}</p>
+              <p>
+                <strong>{order.customer_name}</strong>
+              </p>
+              {order.is_simulated && <p className="pill">Simulation · aucun encaissement réel</p>}
               <ul className="order-lines">
                 {order.items.map((i) => (
                   <li key={i.dish_id}>
@@ -114,6 +127,12 @@ export function Kitchen() {
                   {nextFor(order)[1]}
                   <Icon name="arrow" />
                 </BusyButton>
+              )}
+              <CashValidation order={order} onConfirmed={() => setRefresh((n) => n + 1)} />
+              {order.payment_status === 'paid' && (
+                <Link className="button outline full" to={`/invoice/${order.id}`}>
+                  Voir la facture{order.is_simulated ? ' de démonstration' : ''}
+                </Link>
               )}
               {order.payment_status !== 'paid' && order.status !== 'cancelled' && (
                 <p className="muted">La préparation attend la confirmation du paiement.</p>
@@ -391,6 +410,10 @@ export function ManageMenu() {
 }
 export function Stats() {
   const { user } = useApp();
+  return user.role === 'employee' ? <OperationalStats /> : <DecisionDashboard />;
+}
+function OperationalStats() {
+  const { user } = useApp();
   const [period, setPeriod] = useState('week');
   const { data, error } = useResource(() => api(`/stats?period=${period}`), [period], true);
   return (
@@ -410,7 +433,7 @@ export function Stats() {
         <>
           <div className="stat-grid">
             {[
-              [money(data.stats.revenue), 'Montant des commandes payées', 'chart'],
+              [money(data.stats.revenue), 'Commandes payées · simulations comprises', 'chart'],
               [data.stats.orders, 'Commandes reçues', 'bag'],
               [data.stats.active, 'En préparation ou à servir', 'clock'],
               [data.stats.points, 'Points fidélité attribués', 'gift'],
@@ -461,8 +484,9 @@ export function Stats() {
               </div>
               <p className="muted">
                 Les commandes en attente de paiement ne sont pas comptées dans le montant encaissé.
-                Le mode de paiement actif est indiqué sur le site ; les essais locaux utilisent une
-                simulation.
+                Les simulations sont incluses dans cette vue opérationnelle et signalées sur les
+                commandes. Le tableau de bord de direction distingue les encaissements réels du
+                volume simulé.
               </p>
               <Link className="button outline" to="/restaurant">
                 Ouvrir le suivi des commandes <Icon name="arrow" />

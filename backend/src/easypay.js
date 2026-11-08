@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { randomUUID, randomBytes } from 'node:crypto';
 import { AppError, requireCondition, audit, RESTAURANT } from './domain.js';
 import { isEasyPay, EASYPAY_REJECTIONS } from './easypay-client.js';
+import { settleOrder } from './settlements.js';
 
 export const publicPayment = (p) => ({
   id: p.id,
@@ -188,7 +189,9 @@ export async function reconcileEasyPay(db, config, paymentId) {
       'UPDATE payments SET status=$1,provider_state=$2,checked_at=NOW() WHERE id=$3 RETURNING *',
       [mapped, status, current.id],
     );
-    if (order.status === 'awaiting_payment') {
+    if (mapped === 'paid') {
+      await settleOrder(tx, order.id, 'easypay', current.mode !== 'easypay-live');
+    } else if (order.status === 'awaiting_payment') {
       // An older failed attempt must not overwrite a newer pending/paid attempt.
       const {
         rows: [other],
