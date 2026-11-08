@@ -6,6 +6,7 @@ import { openDatabase } from '../src/database.js';
 import { seedDemo } from '../src/seed.js';
 import { createApp } from '../src/app.js';
 import { rewardFulfilledOrder } from '../src/domain.js';
+import { settleOrder } from '../src/settlements.js';
 
 const headers = { 'X-Requested-With': 'MonMiamMiam', Origin: 'https://demo.example' };
 async function fixture(enabled = true) {
@@ -70,18 +71,26 @@ test('échec sans points, réussite persistante et répétitions concurrentes sa
     assert.equal(result.body.simulation.outcome, 'paid');
     assert.equal(result.body.simulation.points_earned, 3); // hors remise et livraison
     assert.equal(result.body.balance, before + 3);
-    assert.deepEqual((await f.db.query('SELECT * FROM orders WHERE id=$1', [f.id])).rows, original);
+    const confirmed = (await f.db.query('SELECT * FROM orders WHERE id=$1', [f.id])).rows[0];
+    assert.equal(confirmed.payment_status, 'paid');
+    assert.equal(confirmed.status, 'confirmed');
+    assert.equal(confirmed.is_simulated, true);
+    assert.equal(confirmed.total, original[0].total);
+    assert.equal(
+      (await f.db.query('SELECT COUNT(*)::integer AS n FROM invoices WHERE order_id=$1', [f.id]))
+        .rows[0].n,
+      1,
+    );
     assert.deepEqual(
-      (await f.db.query('SELECT * FROM payments WHERE order_id=$1', [f.id])).rows,
+      (await f.db.query("SELECT * FROM payments WHERE order_id=$1 AND mode<>'demo'", [f.id])).rows,
       payments,
     );
     assert.equal((await f.post('failed')).status, 409);
     assert.equal((await f.post('paid')).status, 200);
     assert.equal((await f.agent.get('/api/loyalty')).body.balance, before + 3);
     // Un vrai paiement honoré plus tard ne récompense pas à nouveau la même commande.
-    await f.db.query("UPDATE orders SET payment_status='paid',status='delivered' WHERE id=$1", [
-      f.id,
-    ]);
+    await f.db.transaction((tx) => settleOrder(tx, f.id, 'easypay', false));
+    await f.db.query("UPDATE orders SET status='delivered' WHERE id=$1", [f.id]);
     const order = (await f.db.query('SELECT * FROM orders WHERE id=$1', [f.id])).rows[0];
     await f.db.transaction((tx) => rewardFulfilledOrder(tx, order));
     assert.equal((await f.agent.get('/api/loyalty')).body.balance, before + 3);
